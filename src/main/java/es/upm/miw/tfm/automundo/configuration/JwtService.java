@@ -13,8 +13,8 @@ import java.util.Optional;
 @Service
 public class JwtService {
     private static final String BEARER = "Bearer ";
-    private static final String USER_CLAIM = "user";
-    private static final String NAME_CLAIM = "name";
+    private static final String USER_CLAIM = "userName";
+    private static final String NAME_CLAIM = "realName";
     private static final String ROLE_CLAIM = "role";
 
     private String secret;
@@ -29,7 +29,7 @@ public class JwtService {
         this.expire = expire;
     }
 
-    public String extractBearerToken(String bearer) {
+    public String extractToken(String bearer) {
         if (bearer != null && bearer.startsWith(BEARER) && 3 == bearer.split("\\.").length) {
             return bearer.substring(BEARER.length());
         } else {
@@ -37,25 +37,25 @@ public class JwtService {
         }
     }
 
-    public String createToken(String user, String name, String role) {
+    public String createToken(String userName, String realName, String role) {
         return JWT.create()
                 .withIssuer(this.issuer)
                 .withIssuedAt(new Date())
                 .withNotBefore(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + this.expire * 1000))
-                .withClaim(USER_CLAIM, user)
-                .withClaim(NAME_CLAIM, name)
+                .withClaim(USER_CLAIM, userName)
+                .withClaim(NAME_CLAIM, realName)
                 .withClaim(ROLE_CLAIM, role)
                 .sign(Algorithm.HMAC256(this.secret));
     }
 
-    public String user(String authorization) {
+    public String userName(String authorization) {
         return this.verify(authorization)
                 .map(jwt -> jwt.getClaim(USER_CLAIM).asString())
                 .orElse("");
     }
 
-    public String name(String authorization) {
+    public String realName(String authorization) {
         return this.verify(authorization)
                 .map(jwt -> jwt.getClaim(NAME_CLAIM).asString())
                 .orElse("");

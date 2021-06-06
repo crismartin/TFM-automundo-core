@@ -1,4 +1,4 @@
-package es.upm.miw.tfm.automundo.infrastructure.api.http_errors;
+package es.upm.miw.tfm.automundo.infrastructure.mongodb.entities;
 
 public enum Role {
     ADMIN, OPERATOR, AUTHENTICATED;
@@ -12,5 +12,4 @@ public enum Role {
     public String withPrefix() {
         return PREFIX + this.toString();
     }
-
 }
