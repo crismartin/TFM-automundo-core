@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.entities;
 
 import es.upm.miw.tfm.automundo.domain.model.Customer;
+import es.upm.miw.tfm.automundo.domain.model.CustomerCreationUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +32,10 @@ public class CustomerEntity {
     private String name;
     private String surName;
     private String secondSurName;
+
+    public CustomerEntity(CustomerCreationUpdate customerCreation) {
+        BeanUtils.copyProperties(customerCreation, this);
+    }
 
     public Customer toCustomer() {
         Customer customer = new Customer();
