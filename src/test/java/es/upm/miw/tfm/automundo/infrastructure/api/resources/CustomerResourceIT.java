@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.CustomerResource.*;
 
@@ -34,5 +35,18 @@ public class CustomerResourceIT {
                 .value(Assertions::assertNotNull)
                 .value(customerLines -> assertTrue(customerLines
                         .stream().allMatch(customerLine -> customerLine.getCompleteName().toLowerCase().contains("garcía"))));
+    }
+
+    @Test
+    void testFindByBarcode() {
+        this.webTestClient
+                .get()
+                .uri(CUSTOMERS + IDENTIFICATION_ID, "11111111-A")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Customer.class)
+                .value(Assertions::assertNotNull)
+                .value(customer -> assertEquals("11111111-A", customer.getIdentificationId()
+                ));
     }
 }
