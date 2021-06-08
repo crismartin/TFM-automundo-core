@@ -4,6 +4,7 @@ import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.CustomerEntity;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveSortingRepository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface CustomerReactive extends ReactiveSortingRepository<CustomerEntity, String> {
 
@@ -15,4 +16,6 @@ public interface CustomerReactive extends ReactiveSortingRepository<CustomerEnti
             + "] }")
     Flux<CustomerEntity> findByIdentificationidAndNameAndSurnameAndSecondsurnameNullSafe(
             String identificationId, String name, String surName, String secondSurName);
+
+    Mono<CustomerEntity> findByIdentificationId(String identification);
 }

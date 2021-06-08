@@ -5,6 +5,7 @@ import es.upm.miw.tfm.automundo.domain.persistence.CustomerPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class CustomerService {
@@ -16,9 +17,13 @@ public class CustomerService {
         this.customerPersistence = customerPersistence;
     }
 
-    public Flux<Customer> findByIdentificationidAndNameAndSurnameAndSecondsurnameNullSafe(
+    public Flux<Customer> findByIdentificationIdAndNameAndSurNameAndSecondSurNameNullSafe(
             String identificationId, String name, String surName, String secondSurName) {
-        return this.customerPersistence.findByIdentificationidAndNameAndSurnameAndSecondsurnameNullSafe(
+        return this.customerPersistence.findByIdentificationIdAndNameAndSurNameAndSecondSurNameNullSafe(
                 identificationId, name, surName, secondSurName);
+    }
+
+    public Mono<Customer> read(String identification) {
+        return this.customerPersistence.findByIdentificationId(identification);
     }
 }

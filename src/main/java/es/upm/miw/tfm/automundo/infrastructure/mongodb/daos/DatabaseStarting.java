@@ -13,7 +13,7 @@ public class DatabaseStarting {
 
     private CustomerDao customerDao;
 
-    private static final String RANDOM_IDENTIFICATION_ID = "1";
+    private static final String RANDOM_IDENTIFICATION_ID = "11111111-A";
     private static final String RANDOM_PHONE = "666666666";
     private static final String RANDOM_MOBILE_PHONE = "888888888";
     private static final String RANDOM_ADDRESS = "C/ Falsa 123, Madrid";
