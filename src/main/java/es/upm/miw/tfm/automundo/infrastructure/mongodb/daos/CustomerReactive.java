@@ -12,7 +12,7 @@ public interface CustomerReactive extends ReactiveSortingRepository<CustomerEnti
             + "?#{ [0] == null ? {_id : {$ne:null}} : { identificationId : {$regex:[0], $options: 'i'} } },"
             + "?#{ [1] == null ? {_id : {$ne:null}} : { name : {$regex:[1], $options: 'i'} } },"
             + "?#{ [2] == null ? {_id : {$ne:null}} : { surName : {$regex:[2], $options: 'i'} } },"
-            + "?#{ [3] == null ? {_id : {$ne:null}} : { secondSurName : {$regex:[2], $options: 'i'} } },"
+            + "?#{ [3] == null ? {_id : {$ne:null}} : { secondSurName : {$regex:[3], $options: 'i'} } },"
             + "] }")
     Flux<CustomerEntity> findByIdentificationidAndNameAndSurnameAndSecondsurnameNullSafe(
             String identificationId, String name, String surName, String secondSurName);
