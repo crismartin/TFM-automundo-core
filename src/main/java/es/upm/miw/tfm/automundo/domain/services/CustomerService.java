@@ -36,4 +36,8 @@ public class CustomerService {
     public Mono<Customer> update(String identification, CustomerUpdate customerUpdate) {
         return this.customerPersistence.update(identification, customerUpdate);
     }
+
+    public Mono<Void> delete(String identification) {
+        return this.customerPersistence.delete(identification);
+    }
 }

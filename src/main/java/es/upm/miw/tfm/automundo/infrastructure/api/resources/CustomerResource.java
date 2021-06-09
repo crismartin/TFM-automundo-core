@@ -49,4 +49,9 @@ public class CustomerResource {
     public Mono<Customer> update(@PathVariable String identification, @Valid @RequestBody CustomerUpdate customerUpdate) {
         return this.customerService.update(identification, customerUpdate);
     }
+
+    @DeleteMapping(IDENTIFICATION_ID)
+    public Mono<Void> delete(@PathVariable String identification) {
+        return this.customerService.delete(identification);
+    }
 }

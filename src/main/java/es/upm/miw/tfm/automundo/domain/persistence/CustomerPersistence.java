@@ -18,4 +18,6 @@ public interface CustomerPersistence {
     Mono<Customer> create(CustomerCreation customerCreation);
 
     Mono<Customer> update(String identification, CustomerUpdate customerUpdate);
+
+    Mono<Void> delete(String identification);
 }
