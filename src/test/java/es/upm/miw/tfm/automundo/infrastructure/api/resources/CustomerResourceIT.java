@@ -4,6 +4,7 @@ import es.upm.miw.tfm.automundo.domain.model.Customer;
 import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
 import es.upm.miw.tfm.automundo.domain.model.CustomerUpdate;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.CustomerLineDto;
+import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleLineDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
@@ -142,4 +143,16 @@ public class CustomerResourceIT {
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT);
     }
+
+    @Test
+    void testFindVehiclesByIdCustomer() {
+        String identificationCustomer = "22222222-A";
+        this.webTestClient
+                .get()
+                .uri(CUSTOMERS + VEHICLES_CUSTOMER, identificationCustomer)
+                .exchange()
+                .expectBodyList(VehicleLineDto.class)
+                .value(Assertions::assertNotNull);
+    }
+
 }
