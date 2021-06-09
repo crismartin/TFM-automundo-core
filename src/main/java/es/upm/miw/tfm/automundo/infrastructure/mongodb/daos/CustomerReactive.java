@@ -18,4 +18,6 @@ public interface CustomerReactive extends ReactiveSortingRepository<CustomerEnti
             String identificationId, String name, String surName, String secondSurName);
 
     Mono<CustomerEntity> findByIdentificationId(String identification);
+
+    Mono<Void> deleteByIdentificationId(String identification);
 }

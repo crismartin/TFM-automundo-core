@@ -57,6 +57,15 @@ public class CustomerPersistenceMongodb implements CustomerPersistence {
                 .map(CustomerEntity::toCustomer);
     }
 
+    @Override
+    public Mono<Void> delete(String identification) {
+        //TODO before find vehicles with Customer.IdentificationId and delete it
+        return this.customerReactive.findByIdentificationId(identification)
+                .switchIfEmpty(Mono.error(new NotFoundException("Cannot delete. Non existent customer " +
+                        "with identification id: " + identification)))
+                .then(this.customerReactive.deleteByIdentificationId(identification));
+    }
+
     private Mono<Void> assertIdentificationIdNotExist(String identificationId) {
         return this.customerReactive.findByIdentificationId(identificationId)
                 .flatMap(customerEntity -> Mono.error(

@@ -40,7 +40,7 @@ public class CustomerResourceIT {
     }
 
     @Test
-    void testFindByBarcode() {
+    void testFindByBarcodeAndUpdate() {
         Customer customerFound = this.webTestClient
                 .get()
                 .uri(CUSTOMERS + IDENTIFICATION_ID, "11111111-A")
@@ -80,11 +80,12 @@ public class CustomerResourceIT {
     }
 
     @Test
-    void testCreate() {
+    void testCreateAndDelete() {
+        //TODO make test also for deleting vehicles from a customer
         CustomerCreation customerCreation = CustomerCreation.builder().identificationId("99999999-A")
                 .phone("967811566").mobilePhone("654744344").address("C/ Nuevo 123, Leganés").email("nuevocliente@gmail.com")
                 .name("Marcos").surName("Alvaredo").secondSurName("Pino").build();
-        this.webTestClient
+        Customer customer = this.webTestClient
                 .post()
                 .uri(CUSTOMERS)
                 .body(Mono.just(customerCreation), CustomerCreation.class)
@@ -104,7 +105,29 @@ public class CustomerResourceIT {
                     assertEquals("Pino", customerCreated.getSecondSurName());
                     assertNotNull(customerCreated.getRegistrationDate());
                     assertNotNull(customerCreated.getLastVisitDate());
-                });
+                }).returnResult().getResponseBody();
+        assertNotNull(customer);
+
+        this.webTestClient
+                .delete()
+                .uri(CUSTOMERS + IDENTIFICATION_ID, "99999999-A")
+                .exchange()
+                .expectStatus().isOk();
+
+        this.webTestClient
+                .get()
+                .uri(CUSTOMERS + IDENTIFICATION_ID, "99999999-A")
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void testDeleteNotFoundException() {
+        this.webTestClient
+                .delete()
+                .uri(CUSTOMERS + IDENTIFICATION_ID, "$$$$$$$$-$")
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
