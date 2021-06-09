@@ -1,7 +1,8 @@
 package es.upm.miw.tfm.automundo.domain.services;
 
 import es.upm.miw.tfm.automundo.domain.model.Customer;
-import es.upm.miw.tfm.automundo.domain.model.CustomerCreationUpdate;
+import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
+import es.upm.miw.tfm.automundo.domain.model.CustomerUpdate;
 import es.upm.miw.tfm.automundo.domain.persistence.CustomerPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,11 @@ public class CustomerService {
         return this.customerPersistence.findByIdentificationId(identification);
     }
 
-    public Mono<Customer> create(CustomerCreationUpdate customerCreationUpdate) {
-        return this.customerPersistence.create(customerCreationUpdate);
+    public Mono<Customer> create(CustomerCreation customerCreation) {
+        return this.customerPersistence.create(customerCreation);
+    }
+
+    public Mono<Customer> update(String identification, CustomerUpdate customerUpdate) {
+        return this.customerPersistence.update(identification, customerUpdate);
     }
 }

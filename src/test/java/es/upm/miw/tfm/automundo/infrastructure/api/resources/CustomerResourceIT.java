@@ -1,10 +1,12 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 import es.upm.miw.tfm.automundo.domain.model.Customer;
-import es.upm.miw.tfm.automundo.domain.model.CustomerCreationUpdate;
+import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
+import es.upm.miw.tfm.automundo.domain.model.CustomerUpdate;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.CustomerLineDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -39,7 +41,7 @@ public class CustomerResourceIT {
 
     @Test
     void testFindByBarcode() {
-        this.webTestClient
+        Customer customerFound = this.webTestClient
                 .get()
                 .uri(CUSTOMERS + IDENTIFICATION_ID, "11111111-A")
                 .exchange()
@@ -47,18 +49,45 @@ public class CustomerResourceIT {
                 .expectBody(Customer.class)
                 .value(Assertions::assertNotNull)
                 .value(customer -> assertEquals("11111111-A", customer.getIdentificationId()
-                ));
+                )).returnResult().getResponseBody();
+
+        CustomerUpdate customerUpdate = new CustomerUpdate();
+        BeanUtils.copyProperties(customerFound, customerUpdate);
+        customerUpdate.setEmail("cliente.modificado@gmail.com");
+        customerUpdate.setMobilePhone("630881234");
+        customerUpdate.setAddress("C/ Modificada, 345, Madrid");
+
+        this.webTestClient
+                .put()
+                .uri(CUSTOMERS + IDENTIFICATION_ID, "11111111-A")
+                .body(Mono.just(customerUpdate), CustomerUpdate.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Customer.class)
+                .value(Assertions::assertNotNull)
+                .value(updatedCustomer -> {
+                    assertEquals(customerUpdate.getEmail(), updatedCustomer.getEmail());
+                    assertEquals(customerUpdate.getMobilePhone(), updatedCustomer.getMobilePhone());
+                    assertEquals(customerUpdate.getAddress(), updatedCustomer.getAddress());
+                    assertEquals(customerFound.getIdentificationId(), updatedCustomer.getIdentificationId());
+                    assertEquals(customerFound.getPhone(), updatedCustomer.getPhone());
+                    assertEquals(customerFound.getName(), updatedCustomer.getName());
+                    assertEquals(customerFound.getSurName(), updatedCustomer.getSurName());
+                    assertEquals(customerFound.getSecondSurName(), updatedCustomer.getSecondSurName());
+                    assertEquals(customerFound.getRegistrationDate(), updatedCustomer.getRegistrationDate());
+                    assertEquals(customerFound.getLastVisitDate(), updatedCustomer.getLastVisitDate());
+                });
     }
 
     @Test
     void testCreate() {
-        CustomerCreationUpdate customerCreation = CustomerCreationUpdate.builder().identificationId("99999999-A")
+        CustomerCreation customerCreation = CustomerCreation.builder().identificationId("99999999-A")
                 .phone("967811566").mobilePhone("654744344").address("C/ Nuevo 123, Leganés").email("nuevocliente@gmail.com")
                 .name("Marcos").surName("Alvaredo").secondSurName("Pino").build();
         this.webTestClient
                 .post()
                 .uri(CUSTOMERS)
-                .body(Mono.just(customerCreation), CustomerCreationUpdate.class)
+                .body(Mono.just(customerCreation), CustomerCreation.class)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(Customer.class)
@@ -80,13 +109,13 @@ public class CustomerResourceIT {
 
     @Test
     void testConflictIdentificationIdException() {
-        CustomerCreationUpdate customerCreation = CustomerCreationUpdate.builder().identificationId("11111111-A")
+        CustomerCreation customerCreation = CustomerCreation.builder().identificationId("11111111-A")
                 .phone("967811566").mobilePhone("654744344").address("C/ Nuevo 123, Leganés").email("nuevocliente@gmail.com")
                 .name("Marcos").surName("Alvaredo").secondSurName("Pino").build();
         this.webTestClient
                 .post()
                 .uri(CUSTOMERS)
-                .body(Mono.just(customerCreation), CustomerCreationUpdate.class)
+                .body(Mono.just(customerCreation), CustomerCreation.class)
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT);
     }
