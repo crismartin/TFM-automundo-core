@@ -1,7 +1,8 @@
 package es.upm.miw.tfm.automundo.domain.persistence;
 
 import es.upm.miw.tfm.automundo.domain.model.Customer;
-import es.upm.miw.tfm.automundo.domain.model.CustomerCreationUpdate;
+import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
+import es.upm.miw.tfm.automundo.domain.model.CustomerUpdate;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,5 +15,7 @@ public interface CustomerPersistence {
 
     Mono<Customer> findByIdentificationId(String identification);
 
-    Mono<Customer> create(CustomerCreationUpdate customerCreationUpdate);
+    Mono<Customer> create(CustomerCreation customerCreation);
+
+    Mono<Customer> update(String identification, CustomerUpdate customerUpdate);
 }

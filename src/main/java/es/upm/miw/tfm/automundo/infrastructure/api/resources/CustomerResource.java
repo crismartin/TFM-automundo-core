@@ -1,7 +1,8 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 import es.upm.miw.tfm.automundo.domain.model.Customer;
-import es.upm.miw.tfm.automundo.domain.model.CustomerCreationUpdate;
+import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
+import es.upm.miw.tfm.automundo.domain.model.CustomerUpdate;
 import es.upm.miw.tfm.automundo.domain.services.CustomerService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.CustomerLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,12 @@ public class CustomerResource {
     }
 
     @PostMapping(produces = {"application/json"})
-    public Mono<Customer> create(@Valid @RequestBody CustomerCreationUpdate customerCreationUpdate) {
-        customerCreationUpdate.doDefault();
-        return this.customerService.create(customerCreationUpdate);
+    public Mono<Customer> create(@Valid @RequestBody CustomerCreation customerCreation) {
+        return this.customerService.create(customerCreation);
+    }
+
+    @PutMapping(IDENTIFICATION_ID)
+    public Mono<Customer> update(@PathVariable String identification, @Valid @RequestBody CustomerUpdate customerUpdate) {
+        return this.customerService.update(identification, customerUpdate);
     }
 }
