@@ -4,7 +4,9 @@ import es.upm.miw.tfm.automundo.domain.model.Customer;
 import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
 import es.upm.miw.tfm.automundo.domain.model.CustomerUpdate;
 import es.upm.miw.tfm.automundo.domain.services.CustomerService;
+import es.upm.miw.tfm.automundo.domain.services.VehicleService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.CustomerLineDto;
+import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -18,12 +20,15 @@ public class CustomerResource {
     public static final String CUSTOMERS = "/customers";
     public static final String SEARCH = "/search";
     public static final String IDENTIFICATION_ID = "/{identification}";
+    public static final String VEHICLES_CUSTOMER = IDENTIFICATION_ID + "/vehicles";
 
     private CustomerService customerService;
+    private VehicleService vehicleService;
 
     @Autowired
-    public CustomerResource(CustomerService customerService) {
+    public CustomerResource(CustomerService customerService, VehicleService vehicleService) {
         this.customerService = customerService;
+        this.vehicleService = vehicleService;
     }
 
     @GetMapping(SEARCH)
@@ -54,4 +59,11 @@ public class CustomerResource {
     public Mono<Void> delete(@PathVariable String identification) {
         return this.customerService.delete(identification);
     }
+
+    @GetMapping(VEHICLES_CUSTOMER)
+    public Flux<VehicleLineDto> findVehiclesByIdCustomer(@PathVariable String identification) {
+        return this.vehicleService.findVehiclesByIdCustomer(identification)
+                .map(VehicleLineDto::new);
+    }
+
 }
