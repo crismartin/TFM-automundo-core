@@ -1,10 +1,10 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.daos;
 
-import es.upm.miw.tfm.automundo.domain.model.Replacement;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementEntity;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveSortingRepository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface ReplacementReactive extends ReactiveSortingRepository<ReplacementEntity, String> {
 
@@ -14,4 +14,6 @@ public interface ReplacementReactive extends ReactiveSortingRepository<Replaceme
             + "?#{ [2] == null ? {_id : {$ne:null}} : { description : {$regex:[2], $options: 'i'} } },"
             + "] }")
     Flux<ReplacementEntity> findByReferenceAndNameAndDescriptionNullSafe(String reference, String name, String description);
+
+    Mono<ReplacementEntity> findByReference(String reference);
 }

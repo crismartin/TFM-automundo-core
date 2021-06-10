@@ -5,6 +5,7 @@ import es.upm.miw.tfm.automundo.domain.persistence.ReplacementPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class ReplacementService {
@@ -20,5 +21,9 @@ public class ReplacementService {
             String reference, String name, String description) {
         return this.replacementPersistence.findByReferenceAndNameAndDescriptionNullSafe(
                 reference, name, description);
+    }
+
+    public Mono<Replacement> read(String reference) {
+        return this.replacementPersistence.findByReference(reference);
     }
 }

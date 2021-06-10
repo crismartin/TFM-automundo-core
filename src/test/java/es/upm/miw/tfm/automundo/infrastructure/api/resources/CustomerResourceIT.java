@@ -40,7 +40,7 @@ public class CustomerResourceIT {
     }
 
     @Test
-    void testFindByBarcodeAndUpdate() {
+    void testFindByIdentificationIdAndUpdate() {
         Customer customerFound = this.webTestClient
                 .get()
                 .uri(CUSTOMERS + IDENTIFICATION_ID, "11111111-A")
