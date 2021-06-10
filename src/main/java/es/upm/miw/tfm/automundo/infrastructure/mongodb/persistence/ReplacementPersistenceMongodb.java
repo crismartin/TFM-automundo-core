@@ -1,5 +1,6 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.persistence;
 
+import es.upm.miw.tfm.automundo.domain.exceptions.NotFoundException;
 import es.upm.miw.tfm.automundo.domain.model.Replacement;
 import es.upm.miw.tfm.automundo.domain.persistence.ReplacementPersistence;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.ReplacementReactive;
@@ -7,6 +8,7 @@ import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementEntit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 public class ReplacementPersistenceMongodb implements ReplacementPersistence {
@@ -21,6 +23,13 @@ public class ReplacementPersistenceMongodb implements ReplacementPersistence {
     @Override
     public Flux<Replacement> findByReferenceAndNameAndDescriptionNullSafe(String reference, String name, String description) {
         return this.replacementReactive.findByReferenceAndNameAndDescriptionNullSafe(reference, name, description)
+                .map(ReplacementEntity::toReplacement);
+    }
+
+    @Override
+    public Mono<Replacement> findByReference(String reference) {
+        return this.replacementReactive.findByReference(reference)
+                .switchIfEmpty(Mono.error(new NotFoundException("Non existent replacement with reference: " + reference)))
                 .map(ReplacementEntity::toReplacement);
     }
 }
