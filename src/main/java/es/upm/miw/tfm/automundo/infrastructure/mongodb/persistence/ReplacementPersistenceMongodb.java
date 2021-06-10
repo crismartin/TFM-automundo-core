@@ -1,7 +1,9 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.persistence;
 
+import es.upm.miw.tfm.automundo.domain.exceptions.ConflictException;
 import es.upm.miw.tfm.automundo.domain.exceptions.NotFoundException;
 import es.upm.miw.tfm.automundo.domain.model.Replacement;
+import es.upm.miw.tfm.automundo.domain.model.ReplacementCreation;
 import es.upm.miw.tfm.automundo.domain.persistence.ReplacementPersistence;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.ReplacementReactive;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementEntity;
@@ -31,5 +33,20 @@ public class ReplacementPersistenceMongodb implements ReplacementPersistence {
         return this.replacementReactive.findByReference(reference)
                 .switchIfEmpty(Mono.error(new NotFoundException("Non existent replacement with reference: " + reference)))
                 .map(ReplacementEntity::toReplacement);
+    }
+
+    @Override
+    public Mono<Replacement> create(ReplacementCreation replacementCreation) {
+        return this.assertReferenceNotExist(replacementCreation.getReference())
+                .then(Mono.just(new ReplacementEntity(replacementCreation)))
+                .flatMap(this.replacementReactive::save)
+                .map(ReplacementEntity::toReplacement);
+    }
+
+    private Mono<Void> assertReferenceNotExist(String reference) {
+        return this.replacementReactive.findByReference(reference)
+                .flatMap(replacementEntity -> Mono.error(
+                        new ConflictException("Replacement reference already exists : " + reference)
+                ));
     }
 }
