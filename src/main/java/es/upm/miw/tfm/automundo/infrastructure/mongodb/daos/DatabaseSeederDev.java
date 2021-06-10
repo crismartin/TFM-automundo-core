@@ -2,14 +2,17 @@ package es.upm.miw.tfm.automundo.infrastructure.mongodb.daos;
 
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.CustomerDao;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.OwnerTypeDao;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.ReplacementDao;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.VehicleDao;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.CustomerEntity;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.OwnerTypeEntity;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementEntity;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.VehicleEntity;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,15 +21,18 @@ public class DatabaseSeederDev {
     private CustomerDao customerDao;
     private VehicleDao vehicleDao;
     private OwnerTypeDao ownerTypeDao;
+    private ReplacementDao replacementDao;
 
     private DatabaseStarting databaseStarting;
 
     @Autowired
-    public DatabaseSeederDev(DatabaseStarting databaseStarting, CustomerDao customerDao, VehicleDao vehicleDao, OwnerTypeDao ownerTypeDao) {
+    public DatabaseSeederDev(DatabaseStarting databaseStarting, CustomerDao customerDao, VehicleDao vehicleDao,
+                             OwnerTypeDao ownerTypeDao, ReplacementDao replacementDao) {
         this.databaseStarting = databaseStarting;
         this.customerDao = customerDao;
         this.vehicleDao = vehicleDao;
         this.ownerTypeDao = ownerTypeDao;
+        this.replacementDao = replacementDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
 
@@ -39,6 +45,7 @@ public class DatabaseSeederDev {
         this.customerDao.deleteAll();
         this.vehicleDao.deleteAll();
         this.ownerTypeDao.deleteAll();
+        this.replacementDao.deleteAll();
         LogManager.getLogger(this.getClass()).warn("------- Delete All -------");
         this.databaseStarting.initialize();
     }
@@ -77,6 +84,30 @@ public class DatabaseSeederDev {
         };
         this.vehicleDao.saveAll(List.of(vehicles));
         LogManager.getLogger(this.getClass()).warn("        ------- vehicles");
+
+        ReplacementEntity[] replacements = {
+                ReplacementEntity.builder().reference("11111111").name("Pastillas de freno")
+                        .price(new BigDecimal(75.5)).description("Pastillas de freno traseras para coche HONDA Civic")
+                        .build(),
+                ReplacementEntity.builder().reference("22222222").name("Pastillas de freno")
+                        .price(new BigDecimal(55.5)).description("Pastillas de freno delanteras para coche HONDA Civic")
+                        .build(),
+                ReplacementEntity.builder().reference("33333333").name("Discos de freno")
+                        .price(new BigDecimal(30)).description("Pastillas de freno delanteras para coche RENAULT Clio")
+                        .build(),
+                ReplacementEntity.builder().reference("44444444").name("Alternador")
+                        .price(new BigDecimal(49.99)).description("Alternador para motocicleta BMW Z45X")
+                        .build(),
+                ReplacementEntity.builder().reference("55555555").name("Fusibles")
+                        .price(new BigDecimal(75.5)).description("Fusibles para motocicleta KAWASAKI RT285")
+                        .build(),
+                ReplacementEntity.builder().reference("66666666").name("Motor de arranque")
+                        .price(new BigDecimal(130)).description("Fusibles para coche SEAT León")
+                        .build(),
+
+        };
+        this.replacementDao.saveAll(List.of(replacements));
+        LogManager.getLogger(this.getClass()).warn("        ------- replacements");
 
     }
 
