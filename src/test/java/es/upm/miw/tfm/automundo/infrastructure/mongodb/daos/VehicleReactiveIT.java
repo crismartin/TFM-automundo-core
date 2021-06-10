@@ -30,4 +30,18 @@ class VehicleReactiveIT {
                 .thenCancel()
                 .verify();
     }
+
+    @Test
+    void testFindByReference(){
+        String referenceVehicle = "ref-1001";
+        StepVerifier
+                .create(this.vehicleReactive.findByReference(referenceVehicle))
+                .expectNextMatches(vehicle -> {
+                    assertNotNull(vehicle);
+                    assertEquals(vehicle.getReference(), referenceVehicle);
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
 }

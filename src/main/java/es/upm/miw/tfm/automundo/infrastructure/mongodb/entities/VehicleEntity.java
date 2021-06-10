@@ -26,6 +26,8 @@ public class VehicleEntity {
     private String id;
     @Indexed(unique = true)
     private String bin;
+    @Indexed(unique = true)
+    private String reference;
     private String plate;
     private String model;
     private Integer yearRelease;

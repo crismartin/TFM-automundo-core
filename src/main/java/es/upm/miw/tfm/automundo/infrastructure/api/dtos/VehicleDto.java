@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class VehicleLineDto {
-
+public class VehicleDto {
+    private String id;
     private String reference;
     private String bin;
     private String plate;
@@ -21,8 +21,13 @@ public class VehicleLineDto {
     private LocalDateTime registerDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime lastViewDate;
+    private OwnerTypeDto ownerType;
+    private String ownerNumber;
 
-    public VehicleLineDto(Vehicle vehicle) {
+    public VehicleDto(Vehicle vehicle) {
         BeanUtils.copyProperties(vehicle, this);
+        if(vehicle.getOwnerType() != null){
+            ownerType = new OwnerTypeDto(vehicle.getOwnerType());
+        }
     }
 }

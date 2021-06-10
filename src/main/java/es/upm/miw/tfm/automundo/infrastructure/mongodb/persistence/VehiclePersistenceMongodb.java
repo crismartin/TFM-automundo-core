@@ -5,6 +5,7 @@ import es.upm.miw.tfm.automundo.domain.model.Vehicle;
 import es.upm.miw.tfm.automundo.domain.persistence.VehiclePersistence;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.CustomerReactive;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.VehicleReactive;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.VehicleEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -28,6 +29,13 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
         return customerReactive.findByIdentificationId(identificationId)
                 .switchIfEmpty(Mono.error(new NotFoundException("Customer Identification: " + identificationId)))
                 .flatMapMany(customerEntity -> this.vehicleReactive.findAllByCustomer(customerEntity)
-                .map(vehicleEntity -> vehicleEntity.toVehicle()));
+                .map(VehicleEntity::toVehicle));
+    }
+
+    @Override
+    public Mono<Vehicle> findByReference(String reference) {
+        return vehicleReactive.findByReference(reference)
+                .switchIfEmpty(Mono.error(new NotFoundException("Vehicle Reference: " + reference)))
+                .map(VehicleEntity::toVehicle);
     }
 }

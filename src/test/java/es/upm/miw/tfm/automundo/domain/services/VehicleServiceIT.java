@@ -28,4 +28,18 @@ class VehicleServiceIT {
                 .thenCancel()
                 .verify();
     }
+
+    @Test
+    void testFindByReference(){
+        String referenceVehicle = "ref-1001";
+        StepVerifier
+                .create(this.vehicleService.findByReference(referenceVehicle))
+                .expectNextMatches(vehicle -> {
+                    assertNotNull(vehicle);
+                    assertEquals(vehicle.getReference(), referenceVehicle);
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
 }

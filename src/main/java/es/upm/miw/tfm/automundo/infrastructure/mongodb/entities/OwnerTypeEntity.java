@@ -19,7 +19,7 @@ public class OwnerTypeEntity {
     @Id
     private String id;
     @Indexed(unique = true)
-    private String referenceId;
+    private String reference;
     private String name;
 
     public OwnerType toOwnerType(){
