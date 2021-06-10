@@ -20,15 +20,13 @@ public class CustomerResource {
     public static final String CUSTOMERS = "/customers";
     public static final String SEARCH = "/search";
     public static final String IDENTIFICATION_ID = "/{identification}";
-    public static final String VEHICLES_CUSTOMER = IDENTIFICATION_ID + "/vehicles";
 
     private CustomerService customerService;
-    private VehicleService vehicleService;
+
 
     @Autowired
-    public CustomerResource(CustomerService customerService, VehicleService vehicleService) {
+    public CustomerResource(CustomerService customerService) {
         this.customerService = customerService;
-        this.vehicleService = vehicleService;
     }
 
     @GetMapping(SEARCH)
@@ -58,12 +56,6 @@ public class CustomerResource {
     @DeleteMapping(IDENTIFICATION_ID)
     public Mono<Void> delete(@PathVariable String identification) {
         return this.customerService.delete(identification);
-    }
-
-    @GetMapping(VEHICLES_CUSTOMER)
-    public Flux<VehicleLineDto> findVehiclesByIdCustomer(@PathVariable String identification) {
-        return this.vehicleService.findVehiclesByIdCustomer(identification)
-                .map(VehicleLineDto::new);
     }
 
 }
