@@ -5,6 +5,8 @@ import es.upm.miw.tfm.automundo.domain.persistence.VehiclePersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 
 @Service
 public class VehicleService {
@@ -18,5 +20,9 @@ public class VehicleService {
 
     public Flux<Vehicle> findVehiclesByIdCustomer(String identificationId) {
         return vehiclePersistence.findVehiclesByIdCustomer(identificationId);
+    }
+
+    public Mono<Vehicle> findByReference(String reference) {
+        return vehiclePersistence.findByReference(reference);
     }
 }

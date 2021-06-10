@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OwnerType {
     private String id;
-    private String referenceId;
+    private String reference;
     private String name;
 }
