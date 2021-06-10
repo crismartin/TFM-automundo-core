@@ -1,12 +1,18 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
+import es.upm.miw.tfm.automundo.domain.model.Customer;
+import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
 import es.upm.miw.tfm.automundo.domain.model.Replacement;
+import es.upm.miw.tfm.automundo.domain.model.ReplacementCreation;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.ReplacementLineDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
+
+import java.math.BigDecimal;
 
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.CustomerResource.CUSTOMERS;
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.CustomerResource.IDENTIFICATION_ID;
@@ -56,5 +62,40 @@ public class ReplacementResourceIT {
                 .uri(REPLACEMENTS + REFERENCE, "$$$$$$$$")
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void testCreate() {
+        ReplacementCreation replacementCreation = ReplacementCreation.builder().reference("99999999")
+                .name("Amortiguadores").price(new BigDecimal(69.99))
+                .description("Amortiguadores para coche AUDI A3").build();
+        this.webTestClient
+                .post()
+                .uri(REPLACEMENTS)
+                .body(Mono.just(replacementCreation), ReplacementCreation.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Replacement.class)
+                .value(Assertions::assertNotNull)
+                .value(replacementCreated -> {
+                    assertNotNull(replacementCreated.getId());
+                    assertEquals("99999999", replacementCreated.getReference());
+                    assertEquals("Amortiguadores", replacementCreated.getName());
+                    assertEquals(new BigDecimal(69.99).toString(), replacementCreated.getPrice().toString());
+                    assertEquals("Amortiguadores para coche AUDI A3", replacementCreated.getDescription());
+                });
+    }
+
+    @Test
+    void testCreateConflictReferenceException() {
+        ReplacementCreation replacementCreation = ReplacementCreation.builder().reference("11111111")
+                .name("Amortiguadores").price(new BigDecimal(69.99))
+                .description("Amortiguadores para coche AUDI A3").build();
+        this.webTestClient
+                .post()
+                .uri(REPLACEMENTS)
+                .body(Mono.just(replacementCreation), ReplacementCreation.class)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.CONFLICT);
     }
 }

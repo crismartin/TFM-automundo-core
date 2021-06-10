@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.entities;
 
 import es.upm.miw.tfm.automundo.domain.model.Replacement;
+import es.upm.miw.tfm.automundo.domain.model.ReplacementCreation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,10 @@ public class ReplacementEntity {
     private String name;
     private BigDecimal price;
     private String description;
+
+    public ReplacementEntity(ReplacementCreation replacementCreation){
+        BeanUtils.copyProperties(replacementCreation, this);
+    }
 
     public Replacement toReplacement() {
         Replacement replacement = new Replacement();
