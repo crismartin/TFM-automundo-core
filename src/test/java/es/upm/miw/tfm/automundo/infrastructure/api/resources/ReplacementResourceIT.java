@@ -1,21 +1,16 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
-import es.upm.miw.tfm.automundo.domain.model.Customer;
-import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
-import es.upm.miw.tfm.automundo.domain.model.Replacement;
-import es.upm.miw.tfm.automundo.domain.model.ReplacementCreation;
+import es.upm.miw.tfm.automundo.domain.model.*;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.ReplacementLineDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
-
-import static es.upm.miw.tfm.automundo.infrastructure.api.resources.CustomerResource.CUSTOMERS;
-import static es.upm.miw.tfm.automundo.infrastructure.api.resources.CustomerResource.IDENTIFICATION_ID;
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.ReplacementResource.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,15 +39,36 @@ public class ReplacementResourceIT {
     }
 
     @Test
-    void testFindByReference() {
-        this.webTestClient
+    void testFindByReferenceAndUpdate() {
+        Replacement replacementFound = this.webTestClient
                 .get()
                 .uri(REPLACEMENTS + REFERENCE, "11111111")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(Replacement.class)
                 .value(Assertions::assertNotNull)
-                .value(replacement -> assertEquals("11111111", replacement.getReference()));
+                .value(replacement -> assertEquals("11111111", replacement.getReference()))
+                .returnResult().getResponseBody();
+
+        ReplacementUpdate replacementUpdate = new ReplacementUpdate();
+        BeanUtils.copyProperties(replacementFound, replacementUpdate);
+        replacementUpdate.setName("Repuesto Modificado");
+        replacementUpdate.setPrice(new BigDecimal(28.5));
+
+        this.webTestClient
+                .put()
+                .uri(REPLACEMENTS + REFERENCE, "11111111")
+                .body(Mono.just(replacementUpdate), ReplacementUpdate.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Replacement.class)
+                .value(Assertions::assertNotNull)
+                .value(updatedReplacement -> {
+                    assertEquals(replacementUpdate.getName(), updatedReplacement.getName());
+                    assertEquals(replacementUpdate.getPrice(), updatedReplacement.getPrice());
+                    assertEquals(replacementFound.getDescription(), updatedReplacement.getDescription());
+                    assertEquals(replacementFound.getReference(), replacementFound.getReference());
+                });
     }
 
     @Test

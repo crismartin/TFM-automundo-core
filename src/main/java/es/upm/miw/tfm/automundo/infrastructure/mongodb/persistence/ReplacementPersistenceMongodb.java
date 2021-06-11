@@ -4,9 +4,11 @@ import es.upm.miw.tfm.automundo.domain.exceptions.ConflictException;
 import es.upm.miw.tfm.automundo.domain.exceptions.NotFoundException;
 import es.upm.miw.tfm.automundo.domain.model.Replacement;
 import es.upm.miw.tfm.automundo.domain.model.ReplacementCreation;
+import es.upm.miw.tfm.automundo.domain.model.ReplacementUpdate;
 import es.upm.miw.tfm.automundo.domain.persistence.ReplacementPersistence;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.ReplacementReactive;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementEntity;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -40,6 +42,18 @@ public class ReplacementPersistenceMongodb implements ReplacementPersistence {
         return this.assertReferenceNotExist(replacementCreation.getReference())
                 .then(Mono.just(new ReplacementEntity(replacementCreation)))
                 .flatMap(this.replacementReactive::save)
+                .map(ReplacementEntity::toReplacement);
+    }
+
+    @Override
+    public Mono<Replacement> update(String reference, ReplacementUpdate replacementUpdate) {
+        return this.replacementReactive.findByReference(reference)
+                .switchIfEmpty(Mono.error(new NotFoundException("Cannot update. Non existent replacement " +
+                        "with reference: " + reference)))
+                .map(updatingReplacement -> {
+                    BeanUtils.copyProperties(replacementUpdate, updatingReplacement);
+                    return updatingReplacement;
+                }).flatMap(this.replacementReactive::save)
                 .map(ReplacementEntity::toReplacement);
     }
 
