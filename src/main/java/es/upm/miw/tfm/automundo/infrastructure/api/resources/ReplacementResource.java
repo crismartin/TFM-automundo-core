@@ -1,8 +1,8 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
-import es.upm.miw.tfm.automundo.domain.model.Customer;
 import es.upm.miw.tfm.automundo.domain.model.Replacement;
 import es.upm.miw.tfm.automundo.domain.model.ReplacementCreation;
+import es.upm.miw.tfm.automundo.domain.model.ReplacementUpdate;
 import es.upm.miw.tfm.automundo.domain.services.ReplacementService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.ReplacementLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +41,10 @@ public class ReplacementResource {
     @PostMapping(produces = {"application/json"})
     public Mono<Replacement> create(@Valid @RequestBody ReplacementCreation replacementCreation) {
         return this.replacementService.create(replacementCreation);
+    }
+
+    @PutMapping(REFERENCE)
+    public Mono<Replacement> update(@PathVariable String reference, @Valid @RequestBody ReplacementUpdate replacementUpdate) {
+        return this.replacementService.update(reference, replacementUpdate);
     }
 }
