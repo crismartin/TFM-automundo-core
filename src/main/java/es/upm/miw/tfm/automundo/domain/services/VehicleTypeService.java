@@ -2,6 +2,7 @@ package es.upm.miw.tfm.automundo.domain.services;
 
 import es.upm.miw.tfm.automundo.domain.model.VehicleType;
 import es.upm.miw.tfm.automundo.domain.model.VehicleTypeCreation;
+import es.upm.miw.tfm.automundo.domain.model.VehicleTypeUpdate;
 import es.upm.miw.tfm.automundo.domain.persistence.VehicleTypePersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,5 +30,9 @@ public class VehicleTypeService {
 
     public Mono<VehicleType> create(VehicleTypeCreation vehicleTypeCreation) {
         return this.vehicleTypePersistence.create(vehicleTypeCreation);
+    }
+
+    public Mono<VehicleType> update(String reference, VehicleTypeUpdate vehicleTypeUpdate) {
+        return this.vehicleTypePersistence.update(reference, vehicleTypeUpdate);
     }
 }

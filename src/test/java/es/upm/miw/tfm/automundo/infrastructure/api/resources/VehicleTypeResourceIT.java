@@ -1,15 +1,16 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
-import es.upm.miw.tfm.automundo.domain.model.VehicleType;
-import es.upm.miw.tfm.automundo.domain.model.VehicleTypeCreation;
+import es.upm.miw.tfm.automundo.domain.model.*;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeLineDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import static es.upm.miw.tfm.automundo.infrastructure.api.resources.ReplacementResource.REFERENCE;
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.VehicleTypeResource.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,15 +39,45 @@ public class VehicleTypeResourceIT {
     }
 
     @Test
-    void testFindByReference() {
-        this.webTestClient
+    void testFindByReferenceAndUpdate() {
+        VehicleType vehicleTypeFound = this.webTestClient
                 .get()
                 .uri(VEHICLE_TYPES + REFERENCE, "11111111")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(VehicleType.class)
                 .value(Assertions::assertNotNull)
-                .value(vehicleType -> assertEquals("11111111", vehicleType.getReference()));
+                .value(vehicleType -> assertEquals("11111111", vehicleType.getReference()))
+                .returnResult().getResponseBody();
+
+        VehicleTypeUpdate vehicleTypeUpdate = new VehicleTypeUpdate();
+        BeanUtils.copyProperties(vehicleTypeFound, vehicleTypeUpdate);
+        vehicleTypeUpdate.setName("Tipo de vehículo Modificado");
+
+        this.webTestClient
+                .put()
+                .uri(VEHICLE_TYPES + REFERENCE, "11111111")
+                .body(Mono.just(vehicleTypeUpdate), VehicleTypeUpdate.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(VehicleType.class)
+                .value(Assertions::assertNotNull)
+                .value(updatedVehicleType -> {
+                    assertEquals(vehicleTypeUpdate.getName(), updatedVehicleType.getName());
+                    assertEquals(vehicleTypeFound.getDescription(), updatedVehicleType.getDescription());
+                    assertEquals(vehicleTypeFound.getReference(), updatedVehicleType.getReference());
+                });
+    }
+
+    @Test
+    void testUpdateNotFoundException() {
+        VehicleTypeUpdate vehicleTypeUpdate = new VehicleTypeUpdate("Nombre", "Descripción");
+        this.webTestClient
+                .put()
+                .uri(VEHICLE_TYPES + REFERENCE, "$$$$$$$$")
+                .body(Mono.just(vehicleTypeUpdate), VehicleTypeUpdate.class)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test

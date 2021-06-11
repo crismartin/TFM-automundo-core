@@ -4,10 +4,11 @@ import es.upm.miw.tfm.automundo.domain.exceptions.ConflictException;
 import es.upm.miw.tfm.automundo.domain.exceptions.NotFoundException;
 import es.upm.miw.tfm.automundo.domain.model.VehicleType;
 import es.upm.miw.tfm.automundo.domain.model.VehicleTypeCreation;
+import es.upm.miw.tfm.automundo.domain.model.VehicleTypeUpdate;
 import es.upm.miw.tfm.automundo.domain.persistence.VehicleTypePersistence;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.VehicleTypeReactive;
-import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementEntity;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.VehicleTypeEntity;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -40,6 +41,18 @@ public class VehicleTypePersistenceMongodb implements VehicleTypePersistence {
         return this.assertReferenceNotExist(vehicleTypeCreation.getReference())
                 .then(Mono.just(new VehicleTypeEntity(vehicleTypeCreation)))
                 .flatMap(this.vehicleTypeReactive::save)
+                .map(VehicleTypeEntity::toVehicleType);
+    }
+
+    @Override
+    public Mono<VehicleType> update(String reference, VehicleTypeUpdate vehicleTypeUpdate) {
+        return this.vehicleTypeReactive.findByReference(reference)
+                .switchIfEmpty(Mono.error(new NotFoundException("Cannot update. Non existent vehicle type " +
+                        "with reference: " + reference)))
+                .map(updatingVehicleType -> {
+                    BeanUtils.copyProperties(vehicleTypeUpdate, updatingVehicleType);
+                    return updatingVehicleType;
+                }).flatMap(this.vehicleTypeReactive::save)
                 .map(VehicleTypeEntity::toVehicleType);
     }
 
