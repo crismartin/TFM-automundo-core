@@ -1,12 +1,15 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 import es.upm.miw.tfm.automundo.domain.model.VehicleType;
+import es.upm.miw.tfm.automundo.domain.model.VehicleTypeCreation;
 import es.upm.miw.tfm.automundo.domain.services.VehicleTypeService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(VehicleTypeResource.VEHICLE_TYPES)
@@ -33,5 +36,10 @@ public class VehicleTypeResource {
     @GetMapping(REFERENCE)
     public Mono<VehicleType> read(@PathVariable String reference) {
         return this.vehicleTypeService.read(reference);
+    }
+
+    @PostMapping(produces = {"application/json"})
+    public Mono<VehicleType> create(@Valid @RequestBody VehicleTypeCreation vehicleTypeCreation) {
+        return this.vehicleTypeService.create(vehicleTypeCreation);
     }
 }
