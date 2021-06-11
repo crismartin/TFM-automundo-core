@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.entities;
 
 import es.upm.miw.tfm.automundo.domain.model.VehicleType;
+import es.upm.miw.tfm.automundo.domain.model.VehicleTypeCreation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,10 @@ public class VehicleTypeEntity {
     private String reference;
     private String name;
     private String description;
+
+    public VehicleTypeEntity(VehicleTypeCreation vehicleTypeCreation) {
+        BeanUtils.copyProperties(vehicleTypeCreation, this);
+    }
 
     public VehicleType toVehicleType() {
         VehicleType vehicleType = new VehicleType();

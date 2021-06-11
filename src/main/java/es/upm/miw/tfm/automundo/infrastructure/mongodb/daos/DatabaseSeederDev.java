@@ -117,7 +117,7 @@ public class DatabaseSeederDev {
                         .name("VTC").description("Vehículos VTC").build(),
                 VehicleTypeEntity.builder().reference("44444444")
                         .name("Ayuntamiento sanidad").description("Ambulancias, UVI Móviles, SUMA").build(),
-                VehicleTypeEntity.builder().reference("44444444")
+                VehicleTypeEntity.builder().reference("55555555")
                         .name("Ayuntamiento protección").description("Policía, bomberos ...").build(),
 
         };

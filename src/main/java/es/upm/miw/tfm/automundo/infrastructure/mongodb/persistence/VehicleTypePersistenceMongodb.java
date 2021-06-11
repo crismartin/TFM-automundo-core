@@ -1,9 +1,12 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.persistence;
 
+import es.upm.miw.tfm.automundo.domain.exceptions.ConflictException;
 import es.upm.miw.tfm.automundo.domain.exceptions.NotFoundException;
 import es.upm.miw.tfm.automundo.domain.model.VehicleType;
+import es.upm.miw.tfm.automundo.domain.model.VehicleTypeCreation;
 import es.upm.miw.tfm.automundo.domain.persistence.VehicleTypePersistence;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.VehicleTypeReactive;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementEntity;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.VehicleTypeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -30,5 +33,20 @@ public class VehicleTypePersistenceMongodb implements VehicleTypePersistence {
         return this.vehicleTypeReactive.findByReference(reference)
                 .switchIfEmpty(Mono.error(new NotFoundException("Non existent vehicle type with reference: " + reference)))
                 .map(VehicleTypeEntity::toVehicleType);
+    }
+
+    @Override
+    public Mono<VehicleType> create(VehicleTypeCreation vehicleTypeCreation) {
+        return this.assertReferenceNotExist(vehicleTypeCreation.getReference())
+                .then(Mono.just(new VehicleTypeEntity(vehicleTypeCreation)))
+                .flatMap(this.vehicleTypeReactive::save)
+                .map(VehicleTypeEntity::toVehicleType);
+    }
+
+    private Mono<Void> assertReferenceNotExist(String reference) {
+        return this.vehicleTypeReactive.findByReference(reference)
+                .flatMap(vehicleTypeEntity -> Mono.error(
+                        new ConflictException("Vehicle type reference already exists : " + reference)
+                ));
     }
 }
