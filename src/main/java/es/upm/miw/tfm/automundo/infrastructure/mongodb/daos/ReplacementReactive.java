@@ -16,4 +16,6 @@ public interface ReplacementReactive extends ReactiveSortingRepository<Replaceme
     Flux<ReplacementEntity> findByReferenceAndNameAndDescriptionNullSafe(String reference, String name, String description);
 
     Mono<ReplacementEntity> findByReference(String reference);
+
+    Mono<Void> deleteByReference(String reference);
 }

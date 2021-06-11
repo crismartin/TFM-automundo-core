@@ -47,4 +47,9 @@ public class ReplacementResource {
     public Mono<Replacement> update(@PathVariable String reference, @Valid @RequestBody ReplacementUpdate replacementUpdate) {
         return this.replacementService.update(reference, replacementUpdate);
     }
+
+    @DeleteMapping(REFERENCE)
+    public Mono<Void> delete(@PathVariable String reference) {
+        return this.replacementService.delete(reference);
+    }
 }
