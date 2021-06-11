@@ -11,6 +11,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.ReplacementResource.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,11 +82,11 @@ public class ReplacementResourceIT {
     }
 
     @Test
-    void testCreate() {
+    void testCreateAndDelete() {
         ReplacementCreation replacementCreation = ReplacementCreation.builder().reference("99999999")
                 .name("Amortiguadores").price(new BigDecimal(69.99))
                 .description("Amortiguadores para coche AUDI A3").build();
-        this.webTestClient
+        Replacement replacement = this.webTestClient
                 .post()
                 .uri(REPLACEMENTS)
                 .body(Mono.just(replacementCreation), ReplacementCreation.class)
@@ -99,7 +100,31 @@ public class ReplacementResourceIT {
                     assertEquals("Amortiguadores", replacementCreated.getName());
                     assertEquals(new BigDecimal(69.99).toString(), replacementCreated.getPrice().toString());
                     assertEquals("Amortiguadores para coche AUDI A3", replacementCreated.getDescription());
-                });
+                }).returnResult().getResponseBody();
+        assertNotNull(replacement);
+
+        this.webTestClient
+                .delete()
+                .uri(REPLACEMENTS + REFERENCE, "99999999")
+                .exchange()
+                .expectStatus().isOk();
+
+        this.webTestClient
+                .get()
+                .uri(REPLACEMENTS + REFERENCE, "99999999")
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND);
+
+    }
+    //TODO: make a test deleting conflict exception when replacement is used in any revision of any vehicle
+
+    @Test
+    void testDeleteNotFoundException() {
+        this.webTestClient
+                .delete()
+                .uri(REPLACEMENTS + REFERENCE, "$$$$$$$$")
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test

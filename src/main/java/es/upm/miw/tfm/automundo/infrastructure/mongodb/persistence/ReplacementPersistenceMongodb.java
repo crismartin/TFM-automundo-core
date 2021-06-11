@@ -57,6 +57,15 @@ public class ReplacementPersistenceMongodb implements ReplacementPersistence {
                 .map(ReplacementEntity::toReplacement);
     }
 
+    @Override
+    public Mono<Void> delete(String reference) {
+        // TODO: assert replacement is not used in any revision of any vehicle (conflict exception)
+        return this.replacementReactive.findByReference(reference)
+                .switchIfEmpty(Mono.error(new NotFoundException("Cannot delete. Non existent replacement " +
+                        "with reference: " + reference)))
+                .then(this.replacementReactive.deleteByReference(reference));
+    }
+
     private Mono<Void> assertReferenceNotExist(String reference) {
         return this.replacementReactive.findByReference(reference)
                 .flatMap(replacementEntity -> Mono.error(

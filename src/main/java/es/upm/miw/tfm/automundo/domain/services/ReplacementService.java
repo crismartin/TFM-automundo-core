@@ -36,4 +36,8 @@ public class ReplacementService {
     public Mono<Replacement> update(String reference, ReplacementUpdate replacementUpdate) {
         return this.replacementPersistence.update(reference, replacementUpdate);
     }
+
+    public Mono<Void> delete(String reference) {
+        return this.replacementPersistence.delete(reference);
+    }
 }

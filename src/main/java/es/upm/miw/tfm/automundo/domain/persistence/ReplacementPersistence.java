@@ -17,4 +17,6 @@ public interface ReplacementPersistence {
     Mono<Replacement> create(ReplacementCreation replacementCreation);
 
     Mono<Replacement> update(String reference, ReplacementUpdate replacementUpdate);
+
+    Mono<Void> delete(String reference);
 }
