@@ -1,6 +1,5 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.daos;
 
-import es.upm.miw.tfm.automundo.domain.model.VehicleType;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.*;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.*;
 import org.apache.logging.log4j.LogManager;

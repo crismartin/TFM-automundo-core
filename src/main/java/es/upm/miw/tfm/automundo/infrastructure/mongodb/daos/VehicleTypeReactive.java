@@ -4,6 +4,7 @@ import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.VehicleTypeEntit
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveSortingRepository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface VehicleTypeReactive extends ReactiveSortingRepository<VehicleTypeEntity, String> {
 
@@ -13,4 +14,6 @@ public interface VehicleTypeReactive extends ReactiveSortingRepository<VehicleTy
             + "?#{ [2] == null ? {_id : {$ne:null}} : { description : {$regex:[2], $options: 'i'} } },"
             + "] }")
     Flux<VehicleTypeEntity> findByReferenceAndNameAndDescriptionNullSafe(String reference, String name, String description);
+
+    Mono<VehicleTypeEntity> findByReference(String reference);
 }
