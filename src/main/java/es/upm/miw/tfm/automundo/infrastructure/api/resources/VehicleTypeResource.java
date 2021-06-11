@@ -2,6 +2,7 @@ package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 import es.upm.miw.tfm.automundo.domain.model.VehicleType;
 import es.upm.miw.tfm.automundo.domain.model.VehicleTypeCreation;
+import es.upm.miw.tfm.automundo.domain.model.VehicleTypeUpdate;
 import es.upm.miw.tfm.automundo.domain.services.VehicleTypeService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +42,10 @@ public class VehicleTypeResource {
     @PostMapping(produces = {"application/json"})
     public Mono<VehicleType> create(@Valid @RequestBody VehicleTypeCreation vehicleTypeCreation) {
         return this.vehicleTypeService.create(vehicleTypeCreation);
+    }
+
+    @PutMapping(REFERENCE)
+    public Mono<VehicleType> update(@PathVariable String reference, @Valid @RequestBody VehicleTypeUpdate vehicleTypeUpdate) {
+        return this.vehicleTypeService.update(reference, vehicleTypeUpdate);
     }
 }
