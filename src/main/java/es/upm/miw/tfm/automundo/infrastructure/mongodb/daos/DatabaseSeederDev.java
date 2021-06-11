@@ -1,13 +1,8 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.daos;
 
-import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.CustomerDao;
-import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.OwnerTypeDao;
-import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.ReplacementDao;
-import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.VehicleDao;
-import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.CustomerEntity;
-import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.OwnerTypeEntity;
-import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementEntity;
-import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.VehicleEntity;
+import es.upm.miw.tfm.automundo.domain.model.VehicleType;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.*;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.*;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,17 +17,19 @@ public class DatabaseSeederDev {
     private VehicleDao vehicleDao;
     private OwnerTypeDao ownerTypeDao;
     private ReplacementDao replacementDao;
+    private VehicleTypeDao vehicleTypeDao;
 
     private DatabaseStarting databaseStarting;
 
     @Autowired
     public DatabaseSeederDev(DatabaseStarting databaseStarting, CustomerDao customerDao, VehicleDao vehicleDao,
-                             OwnerTypeDao ownerTypeDao, ReplacementDao replacementDao) {
+                             OwnerTypeDao ownerTypeDao, ReplacementDao replacementDao, VehicleTypeDao vehicleTypeDao) {
         this.databaseStarting = databaseStarting;
         this.customerDao = customerDao;
         this.vehicleDao = vehicleDao;
         this.ownerTypeDao = ownerTypeDao;
         this.replacementDao = replacementDao;
+        this.vehicleTypeDao = vehicleTypeDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
 
@@ -46,6 +43,7 @@ public class DatabaseSeederDev {
         this.vehicleDao.deleteAll();
         this.ownerTypeDao.deleteAll();
         this.replacementDao.deleteAll();
+        this.vehicleTypeDao.deleteAll();
         LogManager.getLogger(this.getClass()).warn("------- Delete All -------");
         this.databaseStarting.initialize();
     }
@@ -110,6 +108,22 @@ public class DatabaseSeederDev {
         };
         this.replacementDao.saveAll(List.of(replacements));
         LogManager.getLogger(this.getClass()).warn("        ------- replacements");
+
+        VehicleTypeEntity[] vehicleTypes = {
+                VehicleTypeEntity.builder().reference("11111111")
+                        .name("Gobierno central").description("Vehículos del gobierno central").build(),
+                VehicleTypeEntity.builder().reference("22222222")
+                        .name("Gobierno autonómico").description("Vehículos del gobierno autonómico").build(),
+                VehicleTypeEntity.builder().reference("33333333")
+                        .name("VTC").description("Vehículos VTC").build(),
+                VehicleTypeEntity.builder().reference("44444444")
+                        .name("Ayuntamiento sanidad").description("Ambulancias, UVI Móviles, SUMA").build(),
+                VehicleTypeEntity.builder().reference("44444444")
+                        .name("Ayuntamiento protección").description("Policía, bomberos ...").build(),
+
+        };
+        this.vehicleTypeDao.saveAll(List.of(vehicleTypes));
+        LogManager.getLogger(this.getClass()).warn("        ------- vehicle-types");
 
     }
 
