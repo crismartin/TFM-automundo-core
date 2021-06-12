@@ -1,18 +1,18 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.dtos;
 
-import es.upm.miw.tfm.automundo.domain.model.OwnerType;
+import es.upm.miw.tfm.automundo.domain.model.VehicleType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
 @Data
 @NoArgsConstructor
-public class OwnerTypeDto {
+public class VehicleTypeDto {
     private String id;
     private String reference;
     private String name;
 
-    public OwnerTypeDto(OwnerType ownerType){
-        BeanUtils.copyProperties(ownerType, this);
+    public VehicleTypeDto(VehicleType vehicleType){
+        BeanUtils.copyProperties(vehicleType, this);
     }
 }

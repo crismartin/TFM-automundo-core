@@ -3,7 +3,7 @@ package es.upm.miw.tfm.automundo.infrastructure.mongodb.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import es.upm.miw.tfm.automundo.domain.model.Customer;
 import es.upm.miw.tfm.automundo.domain.model.Vehicle;
-import es.upm.miw.tfm.automundo.domain.model.OwnerType;
+import es.upm.miw.tfm.automundo.domain.model.VehicleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,7 +36,7 @@ public class VehicleEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime lastViewDate;
     @DBRef(lazy = true)
-    private OwnerTypeEntity ownerType;
+    private VehicleTypeEntity vehicleType;
     private String ownerNumber;
     @DBRef(lazy = true)
     private CustomerEntity customer;
@@ -46,7 +46,7 @@ public class VehicleEntity {
         BeanUtils.copyProperties(this, vehicle);
 
         vehicle.setCustomer(getCustomerFromEntity());
-        vehicle.setOwnerType(getOwnerTypeFromEntity());
+        vehicle.setVehicleType(getVehicleTypeFromEntity());
 
         return vehicle;
     }
@@ -55,8 +55,8 @@ public class VehicleEntity {
         return (this.customer != null) ? this.customer.toCustomer() : null;
     }
 
-    private OwnerType getOwnerTypeFromEntity(){
-        return (this.ownerType != null ) ? this.ownerType.toOwnerType() : null;
+    private VehicleType getVehicleTypeFromEntity(){
+        return (this.vehicleType != null ) ? this.vehicleType.toVehicleType() : null;
     }
 
     public String getIdCustomer(){
