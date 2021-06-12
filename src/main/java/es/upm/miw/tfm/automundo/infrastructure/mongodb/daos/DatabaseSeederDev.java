@@ -87,22 +87,22 @@ public class DatabaseSeederDev {
         ReplacementEntity[] replacements = {
                 ReplacementEntity.builder().reference("11111111").name("Pastillas de freno")
                         .price(new BigDecimal(75.5)).description("Pastillas de freno traseras para coche HONDA Civic")
-                        .build(),
+                        .active(true).build(),
                 ReplacementEntity.builder().reference("22222222").name("Pastillas de freno")
                         .price(new BigDecimal(55.5)).description("Pastillas de freno delanteras para coche HONDA Civic")
-                        .build(),
+                        .active(false).build(),
                 ReplacementEntity.builder().reference("33333333").name("Discos de freno")
                         .price(new BigDecimal(30)).description("Pastillas de freno delanteras para coche RENAULT Clio")
-                        .build(),
+                        .active(true).build(),
                 ReplacementEntity.builder().reference("44444444").name("Alternador")
                         .price(new BigDecimal(49.99)).description("Alternador para motocicleta BMW Z45X")
-                        .build(),
+                        .active(false).build(),
                 ReplacementEntity.builder().reference("55555555").name("Fusibles")
                         .price(new BigDecimal(75.5)).description("Fusibles para motocicleta KAWASAKI RT285")
-                        .build(),
+                        .active(true).build(),
                 ReplacementEntity.builder().reference("66666666").name("Motor de arranque")
                         .price(new BigDecimal(130)).description("Fusibles para coche SEAT León")
-                        .build(),
+                        .active(false).build(),
 
         };
         this.replacementDao.saveAll(List.of(replacements));
@@ -110,15 +110,20 @@ public class DatabaseSeederDev {
 
         VehicleTypeEntity[] vehicleTypes = {
                 VehicleTypeEntity.builder().reference("11111111")
-                        .name("Gobierno central").description("Vehículos del gobierno central").build(),
+                        .name("Gobierno central").description("Vehículos del gobierno central")
+                        .active(true).build(),
                 VehicleTypeEntity.builder().reference("22222222")
-                        .name("Gobierno autonómico").description("Vehículos del gobierno autonómico").build(),
+                        .name("Gobierno autonómico").description("Vehículos del gobierno autonómico")
+                        .active(false).build(),
                 VehicleTypeEntity.builder().reference("33333333")
-                        .name("VTC").description("Vehículos VTC").build(),
+                        .name("VTC").description("Vehículos VTC")
+                        .active(true).build(),
                 VehicleTypeEntity.builder().reference("44444444")
-                        .name("Ayuntamiento sanidad").description("Ambulancias, UVI Móviles, SUMA").build(),
+                        .name("Ayuntamiento sanidad").description("Ambulancias, UVI Móviles, SUMA")
+                        .active(false).build(),
                 VehicleTypeEntity.builder().reference("55555555")
-                        .name("Ayuntamiento protección").description("Policía, bomberos ...").build(),
+                        .name("Ayuntamiento protección").description("Policía, bomberos ...")
+                        .active(true).build(),
 
         };
         this.vehicleTypeDao.saveAll(List.of(vehicleTypes));

@@ -19,10 +19,10 @@ public class ReplacementService {
         this.replacementPersistence = replacementPersistence;
     }
 
-    public Flux<Replacement> findByReferenceAndNameAndDescriptionNullSafe(
-            String reference, String name, String description) {
-        return this.replacementPersistence.findByReferenceAndNameAndDescriptionNullSafe(
-                reference, name, description);
+    public Flux<Replacement> findByReferenceAndNameAndDescriptionAndActiveNullSafe(
+            String reference, String name, String description, Boolean active) {
+        return this.replacementPersistence.findByReferenceAndNameAndDescriptionAndActiveNullSafe(
+                reference, name, description, active);
     }
 
     public Mono<Replacement> read(String reference) {
@@ -35,9 +35,5 @@ public class ReplacementService {
 
     public Mono<Replacement> update(String reference, ReplacementUpdate replacementUpdate) {
         return this.replacementPersistence.update(reference, replacementUpdate);
-    }
-
-    public Mono<Void> delete(String reference) {
-        return this.replacementPersistence.delete(reference);
     }
 }

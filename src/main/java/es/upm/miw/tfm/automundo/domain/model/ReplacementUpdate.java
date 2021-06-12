@@ -13,4 +13,5 @@ public class ReplacementUpdate {
     private String name;
     private BigDecimal price;
     private String description;
+    private Boolean active;
 }

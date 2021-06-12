@@ -12,10 +12,11 @@ public interface ReplacementReactive extends ReactiveSortingRepository<Replaceme
             + "?#{ [0] == null ? {_id : {$ne:null}} : { reference : {$regex:[0], $options: 'i'} } },"
             + "?#{ [1] == null ? {_id : {$ne:null}} : { name : {$regex:[1], $options: 'i'} } },"
             + "?#{ [2] == null ? {_id : {$ne:null}} : { description : {$regex:[2], $options: 'i'} } },"
+            + "?#{ [3] == null ? {_id : {$ne:null}} : { active : [3] } }"
             + "] }")
-    Flux<ReplacementEntity> findByReferenceAndNameAndDescriptionNullSafe(String reference, String name, String description);
+    Flux<ReplacementEntity> findByReferenceAndNameAndDescriptionAndActiveNullSafe(String reference, String name,
+                                                                                  String description, Boolean active);
 
     Mono<ReplacementEntity> findByReference(String reference);
 
-    Mono<Void> deleteByReference(String reference);
 }
