@@ -17,9 +17,9 @@ public class TechnicianLineDto {
     private String completeName;
     private String ssNumber;
     private String mobile;
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime registrationDate;
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime leaveDate;
     private Boolean active;
 
