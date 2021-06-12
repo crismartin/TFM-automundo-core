@@ -14,7 +14,6 @@ import java.util.List;
 public class DatabaseSeederDev {
     private CustomerDao customerDao;
     private VehicleDao vehicleDao;
-    private OwnerTypeDao ownerTypeDao;
     private ReplacementDao replacementDao;
     private VehicleTypeDao vehicleTypeDao;
 
@@ -22,11 +21,10 @@ public class DatabaseSeederDev {
 
     @Autowired
     public DatabaseSeederDev(DatabaseStarting databaseStarting, CustomerDao customerDao, VehicleDao vehicleDao,
-                             OwnerTypeDao ownerTypeDao, ReplacementDao replacementDao, VehicleTypeDao vehicleTypeDao) {
+                             ReplacementDao replacementDao, VehicleTypeDao vehicleTypeDao) {
         this.databaseStarting = databaseStarting;
         this.customerDao = customerDao;
         this.vehicleDao = vehicleDao;
-        this.ownerTypeDao = ownerTypeDao;
         this.replacementDao = replacementDao;
         this.vehicleTypeDao = vehicleTypeDao;
         this.deleteAllAndInitializeAndSeedDataBase();
@@ -40,7 +38,6 @@ public class DatabaseSeederDev {
     private void deleteAllAndInitialize() {
         this.customerDao.deleteAll();
         this.vehicleDao.deleteAll();
-        this.ownerTypeDao.deleteAll();
         this.replacementDao.deleteAll();
         this.vehicleTypeDao.deleteAll();
         LogManager.getLogger(this.getClass()).warn("------- Delete All -------");
@@ -62,23 +59,33 @@ public class DatabaseSeederDev {
         this.customerDao.saveAll(List.of(customers));
         LogManager.getLogger(this.getClass()).warn("        ------- customers");
 
-        OwnerTypeEntity[] ownerTypes = {
-                OwnerTypeEntity.builder().id("4lh67i968h3d7809l982376mn").name("Particular").reference("1").build(),
-                OwnerTypeEntity.builder().id("3lh67i968h3d7809l982376mn").name("Gobierno").reference("2").build()
+
+        VehicleTypeEntity[] vehicleTypes = {
+                VehicleTypeEntity.builder().reference("11111111")
+                        .name("Gobierno central").description("Vehículos del gobierno central").build(),
+                VehicleTypeEntity.builder().reference("22222222")
+                        .name("Gobierno autonómico").description("Vehículos del gobierno autonómico").build(),
+                VehicleTypeEntity.builder().reference("33333333")
+                        .name("VTC").description("Vehículos VTC").build(),
+                VehicleTypeEntity.builder().reference("44444444")
+                        .name("Ayuntamiento sanidad").description("Ambulancias, UVI Móviles, SUMA").build(),
+                VehicleTypeEntity.builder().reference("55555555")
+                        .name("Ayuntamiento protección").description("Policía, bomberos ...").build(),
+
         };
-        this.ownerTypeDao.saveAll(List.of(ownerTypes));
-        LogManager.getLogger(this.getClass()).warn("        ------- ownerTypes");
+        this.vehicleTypeDao.saveAll(List.of(vehicleTypes));
+        LogManager.getLogger(this.getClass()).warn("        ------- vehicle-types");
 
         VehicleEntity[] vehicles = {
                 VehicleEntity.builder().customer(customers[0]).registerDate(LocalDateTime.now()).lastViewDate(LocalDateTime.now())
                         .model("Tesla Model S").yearRelease(2020).plate("EM-2020").bin("vh-1001").id("1lh67i9fds68h3d7809l982376mn")
                         .reference("ref-1001")
-                        .ownerType(ownerTypes[1]).ownerNumber("GOB-123456")
+                        .vehicleType(vehicleTypes[0]).ownerNumber("GOB-123456")
                         .build(),
                 VehicleEntity.builder().customer(customers[0]).registerDate(LocalDateTime.now()).lastViewDate(LocalDateTime.now())
                         .model("Ford Fiesta 2020-E").yearRelease(2020).plate("EM-2020").bin("vh-2002").id("1lh67i68h3d78dssd09l982376mn")
                         .reference("ref-2002")
-                        .ownerType(ownerTypes[0])
+                        .vehicleType((vehicleTypes[2]))
                         .build()
         };
         this.vehicleDao.saveAll(List.of(vehicles));
@@ -108,21 +115,6 @@ public class DatabaseSeederDev {
         this.replacementDao.saveAll(List.of(replacements));
         LogManager.getLogger(this.getClass()).warn("        ------- replacements");
 
-        VehicleTypeEntity[] vehicleTypes = {
-                VehicleTypeEntity.builder().reference("11111111")
-                        .name("Gobierno central").description("Vehículos del gobierno central").build(),
-                VehicleTypeEntity.builder().reference("22222222")
-                        .name("Gobierno autonómico").description("Vehículos del gobierno autonómico").build(),
-                VehicleTypeEntity.builder().reference("33333333")
-                        .name("VTC").description("Vehículos VTC").build(),
-                VehicleTypeEntity.builder().reference("44444444")
-                        .name("Ayuntamiento sanidad").description("Ambulancias, UVI Móviles, SUMA").build(),
-                VehicleTypeEntity.builder().reference("55555555")
-                        .name("Ayuntamiento protección").description("Policía, bomberos ...").build(),
-
-        };
-        this.vehicleTypeDao.saveAll(List.of(vehicleTypes));
-        LogManager.getLogger(this.getClass()).warn("        ------- vehicle-types");
 
     }
 

@@ -26,7 +26,7 @@ public class Vehicle {
     private LocalDateTime registerDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime lastViewDate;
-    private OwnerType ownerType;
+    private VehicleType vehicleType;
     private String ownerNumber;
     private Customer customer;
 
