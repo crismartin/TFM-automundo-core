@@ -16,7 +16,7 @@ import static es.upm.miw.tfm.automundo.infrastructure.api.resources.CustomerReso
 import static org.junit.jupiter.api.Assertions.*;
 
 @RestTestConfig
-public class CustomerResourceIT {
+class CustomerResourceIT {
 
     @Autowired
     private WebTestClient webTestClient;

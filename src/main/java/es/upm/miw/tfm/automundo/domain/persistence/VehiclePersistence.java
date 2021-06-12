@@ -10,4 +10,6 @@ public interface VehiclePersistence {
     Flux<Vehicle> findVehiclesByIdCustomer(String identificationId);
 
     Mono<Vehicle> findByReference(String reference);
+
+    Mono<Vehicle> create(Vehicle vehicle);
 }

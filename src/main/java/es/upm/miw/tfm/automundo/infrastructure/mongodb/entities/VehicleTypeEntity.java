@@ -30,6 +30,10 @@ public class VehicleTypeEntity {
         this.active = true;
     }
 
+    public VehicleTypeEntity(VehicleType vehicleType) {
+        BeanUtils.copyProperties(vehicleType, this);
+    }
+
     public VehicleType toVehicleType() {
         VehicleType vehicleType = new VehicleType();
         BeanUtils.copyProperties(this, vehicleType);

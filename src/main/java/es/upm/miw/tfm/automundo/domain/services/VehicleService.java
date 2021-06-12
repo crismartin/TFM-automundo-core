@@ -25,4 +25,8 @@ public class VehicleService {
     public Mono<Vehicle> findByReference(String reference) {
         return vehiclePersistence.findByReference(reference);
     }
+
+    public Mono<Vehicle> create(Vehicle vehicle) {
+        return vehiclePersistence.create(vehicle);
+    }
 }
