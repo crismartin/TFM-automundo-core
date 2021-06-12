@@ -23,9 +23,11 @@ public class VehicleTypeEntity {
     private String reference;
     private String name;
     private String description;
+    private Boolean active;
 
     public VehicleTypeEntity(VehicleTypeCreation vehicleTypeCreation) {
         BeanUtils.copyProperties(vehicleTypeCreation, this);
+        this.active = true;
     }
 
     public VehicleType toVehicleType() {

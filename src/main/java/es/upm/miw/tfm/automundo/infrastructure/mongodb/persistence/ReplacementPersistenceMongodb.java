@@ -25,8 +25,9 @@ public class ReplacementPersistenceMongodb implements ReplacementPersistence {
     }
 
     @Override
-    public Flux<Replacement> findByReferenceAndNameAndDescriptionNullSafe(String reference, String name, String description) {
-        return this.replacementReactive.findByReferenceAndNameAndDescriptionNullSafe(reference, name, description)
+    public Flux<Replacement> findByReferenceAndNameAndDescriptionAndActiveNullSafe(String reference, String name,
+                                                                                   String description, Boolean active) {
+        return this.replacementReactive.findByReferenceAndNameAndDescriptionAndActiveNullSafe(reference, name, description, active)
                 .map(ReplacementEntity::toReplacement);
     }
 
@@ -55,15 +56,6 @@ public class ReplacementPersistenceMongodb implements ReplacementPersistence {
                     return updatingReplacement;
                 }).flatMap(this.replacementReactive::save)
                 .map(ReplacementEntity::toReplacement);
-    }
-
-    @Override
-    public Mono<Void> delete(String reference) {
-        // TODO: assert replacement is not used in any revision of any vehicle (conflict exception)
-        return this.replacementReactive.findByReference(reference)
-                .switchIfEmpty(Mono.error(new NotFoundException("Cannot delete. Non existent replacement " +
-                        "with reference: " + reference)))
-                .then(this.replacementReactive.deleteByReference(reference));
     }
 
     private Mono<Void> assertReferenceNotExist(String reference) {

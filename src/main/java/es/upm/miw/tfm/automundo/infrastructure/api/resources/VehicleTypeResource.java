@@ -27,10 +27,10 @@ public class VehicleTypeResource {
     }
 
     @GetMapping(SEARCH)
-    public Flux<VehicleTypeLineDto> findByReferenceAndNameAndDescriptionNullSafe(
+    public Flux<VehicleTypeLineDto> findByReferenceAndNameAndDescriptionAndActiveNullSafe(
             @RequestParam(required = false) String reference, @RequestParam(required = false) String name,
-            @RequestParam(required = false) String description) {
-        return this.vehicleTypeService.findByReferenceAndNameAndDescriptionNullSafe(reference, name, description)
+            @RequestParam(required = false) String description, @RequestParam(required = false) Boolean active) {
+        return this.vehicleTypeService.findByReferenceAndNameAndDescriptionAndActiveNullSafe(reference, name, description, active)
                 .map(VehicleTypeLineDto::new);
     }
 

@@ -10,4 +10,5 @@ import lombok.*;
 public class VehicleTypeUpdate {
     private String name;
     private String description;
+    private Boolean active;
 }

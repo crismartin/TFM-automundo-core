@@ -16,6 +16,7 @@ public class ReplacementLineDto {
     private String name;
     private BigDecimal price;
     private String description;
+    private Boolean active;
 
     public ReplacementLineDto(Replacement replacement) {
         BeanUtils.copyProperties(replacement, this);

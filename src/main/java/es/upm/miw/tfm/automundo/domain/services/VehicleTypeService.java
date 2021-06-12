@@ -18,10 +18,10 @@ public class VehicleTypeService {
         this.vehicleTypePersistence = vehicleTypePersistence;
     }
 
-    public Flux<VehicleType> findByReferenceAndNameAndDescriptionNullSafe(
-            String reference, String name, String description) {
-        return this.vehicleTypePersistence.findByReferenceAndNameAndDescriptionNullSafe(
-                reference, name, description);
+    public Flux<VehicleType> findByReferenceAndNameAndDescriptionAndActiveNullSafe(
+            String reference, String name, String description, Boolean active) {
+        return this.vehicleTypePersistence.findByReferenceAndNameAndDescriptionAndActiveNullSafe(
+                reference, name, description, active);
     }
 
     public Mono<VehicleType> read(String reference) {

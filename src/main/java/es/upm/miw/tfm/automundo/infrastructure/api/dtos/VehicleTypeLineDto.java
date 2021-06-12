@@ -13,6 +13,7 @@ public class VehicleTypeLineDto {
     private String reference;
     private String name;
     private String description;
+    private Boolean active;
 
     public VehicleTypeLineDto(VehicleType vehicleType) {
         BeanUtils.copyProperties(vehicleType, this);

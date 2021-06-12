@@ -20,4 +20,5 @@ public class VehicleType {
     private String reference;
     private String name;
     private String description;
+    private Boolean active;
 }

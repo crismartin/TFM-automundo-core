@@ -22,7 +22,7 @@ public class VehicleTypeResourceIT {
     //private RestClientTestService restClientTestService;
 
     @Test
-    void findByReferenceAndNameAndDescriptionNullSafe() {
+    void findByReferenceAndNameAndDescriptionAndActiveNullSafe() {
         this.webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
@@ -66,12 +66,13 @@ public class VehicleTypeResourceIT {
                     assertEquals(vehicleTypeUpdate.getName(), updatedVehicleType.getName());
                     assertEquals(vehicleTypeFound.getDescription(), updatedVehicleType.getDescription());
                     assertEquals(vehicleTypeFound.getReference(), updatedVehicleType.getReference());
+                    assertEquals(vehicleTypeFound.getActive(), updatedVehicleType.getActive());
                 });
     }
 
     @Test
     void testUpdateNotFoundException() {
-        VehicleTypeUpdate vehicleTypeUpdate = new VehicleTypeUpdate("Nombre", "Descripción");
+        VehicleTypeUpdate vehicleTypeUpdate = new VehicleTypeUpdate("Nombre", "Descripción", true);
         this.webTestClient
                 .put()
                 .uri(VEHICLE_TYPES + REFERENCE, "$$$$$$$$")
@@ -106,6 +107,7 @@ public class VehicleTypeResourceIT {
                     assertEquals("99999999", vehicleTypeCreated.getReference());
                     assertEquals("Vehículos de 3 ruedas", vehicleTypeCreated.getName());
                     assertEquals("Vehículos especiales de 3 ruedas", vehicleTypeCreated.getDescription());
+                    assertTrue(vehicleTypeCreated.getActive());
                 });
     }
 

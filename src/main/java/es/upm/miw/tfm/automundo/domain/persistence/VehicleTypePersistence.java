@@ -9,8 +9,8 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface VehicleTypePersistence {
-    Flux<VehicleType> findByReferenceAndNameAndDescriptionNullSafe(
-            String reference, String name, String description);
+    Flux<VehicleType> findByReferenceAndNameAndDescriptionAndActiveNullSafe(
+            String reference, String name, String description, Boolean active);
 
     Mono<VehicleType> findByReference(String reference);
 
