@@ -16,17 +16,19 @@ public class DatabaseSeederDev {
     private VehicleDao vehicleDao;
     private ReplacementDao replacementDao;
     private VehicleTypeDao vehicleTypeDao;
+    private TechnicianDao technicianDao;
 
     private DatabaseStarting databaseStarting;
 
     @Autowired
     public DatabaseSeederDev(DatabaseStarting databaseStarting, CustomerDao customerDao, VehicleDao vehicleDao,
-                             ReplacementDao replacementDao, VehicleTypeDao vehicleTypeDao) {
+                             ReplacementDao replacementDao, VehicleTypeDao vehicleTypeDao, TechnicianDao technicianDao) {
         this.databaseStarting = databaseStarting;
         this.customerDao = customerDao;
         this.vehicleDao = vehicleDao;
         this.replacementDao = replacementDao;
         this.vehicleTypeDao = vehicleTypeDao;
+        this.technicianDao = technicianDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
 
@@ -40,6 +42,7 @@ public class DatabaseSeederDev {
         this.vehicleDao.deleteAll();
         this.replacementDao.deleteAll();
         this.vehicleTypeDao.deleteAll();
+        this.technicianDao.deleteAll();
         LogManager.getLogger(this.getClass()).warn("------- Delete All -------");
         this.databaseStarting.initialize();
     }
@@ -119,6 +122,23 @@ public class DatabaseSeederDev {
         };
         this.replacementDao.saveAll(List.of(replacements));
         LogManager.getLogger(this.getClass()).warn("        ------- replacements");
+
+        TechnicianEntity[] technicians = {
+                TechnicianEntity.builder().identificationId("11111111-T").ssNumber("SS-1111111")
+                        .registrationDate(LocalDateTime.now()).mobile("617271655")
+                        .name("Ramón").surName("López").secondSurName("Blanco").active(true).build(),
+                TechnicianEntity.builder().identificationId("22222222-T").ssNumber("SS-2222222")
+                        .registrationDate(LocalDateTime.now()).leaveDate(LocalDateTime.now()).mobile("643271655")
+                        .name("Alfredo").surName("García").secondSurName("Díaz").active(false).build(),
+                TechnicianEntity.builder().identificationId("33333333-T").ssNumber("SS-3333333")
+                        .registrationDate(LocalDateTime.now()).mobile("655571655")
+                        .name("Laura").surName("Molinero").secondSurName("Ramos").active(true).build(),
+                TechnicianEntity.builder().identificationId("44444444-T").ssNumber("SS-4444444")
+                        .registrationDate(LocalDateTime.now()).leaveDate(LocalDateTime.now()).mobile("688081655")
+                        .name("Roberto").surName("López").secondSurName("Fernández").active(false).build(),
+        };
+        this.technicianDao.saveAll(List.of(technicians));
+        LogManager.getLogger(this.getClass()).warn("        ------- technicians");
     }
 
 }
