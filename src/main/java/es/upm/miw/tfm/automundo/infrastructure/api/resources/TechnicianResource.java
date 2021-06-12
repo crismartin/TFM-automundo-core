@@ -1,12 +1,15 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 import es.upm.miw.tfm.automundo.domain.model.Technician;
+import es.upm.miw.tfm.automundo.domain.model.TechnicianCreation;
 import es.upm.miw.tfm.automundo.domain.services.TechnicianService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.TechnicianLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(TechnicianResource.TECHNICIANS)
@@ -33,6 +36,11 @@ public class TechnicianResource {
     @GetMapping(IDENTIFICATION_ID)
     public Mono<Technician> read(@PathVariable String identification) {
         return this.technicianService.read(identification);
+    }
+
+    @PostMapping(produces = {"application/json"})
+    public Mono<Technician> create(@Valid @RequestBody TechnicianCreation technicianCreation) {
+        return this.technicianService.create(technicianCreation);
     }
 
 }
