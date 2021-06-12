@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Technician {
     @NotBlank
+    private String id;
+    @NotBlank
     private String identificationId;
     private String ssNumber;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")

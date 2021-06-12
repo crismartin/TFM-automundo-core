@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.domain.services;
 
 import es.upm.miw.tfm.automundo.domain.model.Technician;
+import es.upm.miw.tfm.automundo.domain.model.TechnicianCreation;
 import es.upm.miw.tfm.automundo.domain.persistence.TechnicianPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,5 +26,9 @@ public class TechnicianService {
 
     public Mono<Technician> read(String identification) {
         return this.technicianPersistence.findByIdentificationId(identification);
+    }
+
+    public Mono<Technician> create(TechnicianCreation technicianCreation) {
+        return this.technicianPersistence.create(technicianCreation);
     }
 }
