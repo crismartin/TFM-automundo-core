@@ -10,4 +10,6 @@ public interface VehicleReactive extends ReactiveSortingRepository<VehicleEntity
     Flux<VehicleEntity> findAllByCustomer(CustomerEntity customerEntity);
 
     Mono<VehicleEntity> findByReference(String reference);
+
+    Mono<VehicleEntity> findByBin(String bin);
 }

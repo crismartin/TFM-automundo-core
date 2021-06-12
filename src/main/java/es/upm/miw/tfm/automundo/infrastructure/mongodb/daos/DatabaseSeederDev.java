@@ -80,7 +80,7 @@ public class DatabaseSeederDev {
                 VehicleEntity.builder().customer(customers[0]).registerDate(LocalDateTime.now()).lastViewDate(LocalDateTime.now())
                         .model("Tesla Model S").yearRelease(2020).plate("EM-2020").bin("vh-1001").id("1lh67i9fds68h3d7809l982376mn")
                         .reference("ref-1001")
-                        .vehicleType(vehicleTypes[0]).ownerNumber("GOB-123456")
+                        .vehicleType(vehicleTypes[0]).typeNumber("GOB-123456")
                         .build(),
                 VehicleEntity.builder().customer(customers[0]).registerDate(LocalDateTime.now()).lastViewDate(LocalDateTime.now())
                         .model("Ford Fiesta 2020-E").yearRelease(2020).plate("EM-2020").bin("vh-2002").id("1lh67i68h3d78dssd09l982376mn")

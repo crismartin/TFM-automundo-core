@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -37,9 +38,21 @@ public class VehicleEntity {
     private LocalDateTime lastViewDate;
     @DBRef(lazy = true)
     private VehicleTypeEntity vehicleType;
-    private String ownerNumber;
+    private String typeNumber;
     @DBRef(lazy = true)
     private CustomerEntity customer;
+
+    public VehicleEntity(Vehicle vehicle){
+        BeanUtils.copyProperties(vehicle, this);
+
+        if(vehicle.getVehicleType() != null){
+            vehicleType = new VehicleTypeEntity(vehicle.getVehicleType());
+        }
+
+        if(vehicle.getCustomer() != null){
+            customer = new CustomerEntity(vehicle.getCustomer());
+        }
+    }
 
     public Vehicle toVehicle(){
         Vehicle vehicle = new Vehicle();
@@ -61,5 +74,11 @@ public class VehicleEntity {
 
     public String getIdCustomer(){
         return this.customer != null ? this.customer.getId() : null;
+    }
+
+    public void setFieldsCreation(){
+        setLastViewDate(LocalDateTime.now());
+        setRegisterDate(LocalDateTime.now());
+        setReference(UUID.randomUUID().toString());
     }
 }

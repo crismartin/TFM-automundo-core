@@ -1,15 +1,16 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
+import es.upm.miw.tfm.automundo.domain.model.Vehicle;
 import es.upm.miw.tfm.automundo.domain.services.VehicleService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleDto;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleLineDto;
+import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleNewDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(VehicleResource.VEHICLES)
@@ -35,6 +36,12 @@ public class VehicleResource {
     @GetMapping(REFERENCE)
     public Mono<VehicleDto> findByReference(@PathVariable String reference) {
         return this.vehicleService.findByReference(reference)
+                .map(VehicleDto::new);
+    }
+
+    @PostMapping(produces = {"application/json"})
+    public Mono<VehicleDto> create(@Valid @RequestBody VehicleNewDto vehicle){
+        return this.vehicleService.create(new Vehicle(vehicle))
                 .map(VehicleDto::new);
     }
 

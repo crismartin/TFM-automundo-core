@@ -39,6 +39,10 @@ public class CustomerEntity {
         this.lastVisitDate = LocalDateTime.now();
     }
 
+    public CustomerEntity(Customer customer) {
+        BeanUtils.copyProperties(customer, this);
+    }
+
     public Customer toCustomer() {
         Customer customer = new Customer();
         BeanUtils.copyProperties(this, customer);
