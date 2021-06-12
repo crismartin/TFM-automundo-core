@@ -23,7 +23,7 @@ public class ReplacementResourceIT {
     //private RestClientTestService restClientTestService;
 
     @Test
-    void findByReferenceAndNameAndDescriptionNullSafe() {
+    void findByReferenceAndNameAndDescriptionAndActiveNullSafe() {
         this.webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
@@ -68,7 +68,8 @@ public class ReplacementResourceIT {
                     assertEquals(replacementUpdate.getName(), updatedReplacement.getName());
                     assertEquals(replacementUpdate.getPrice(), updatedReplacement.getPrice());
                     assertEquals(replacementFound.getDescription(), updatedReplacement.getDescription());
-                    assertEquals(replacementFound.getReference(), replacementFound.getReference());
+                    assertEquals(replacementFound.getReference(), updatedReplacement.getReference());
+                    assertEquals(replacementFound.getActive(), updatedReplacement.getActive());
                 });
     }
 
@@ -82,11 +83,11 @@ public class ReplacementResourceIT {
     }
 
     @Test
-    void testCreateAndDelete() {
+    void testCreate() {
         ReplacementCreation replacementCreation = ReplacementCreation.builder().reference("99999999")
                 .name("Amortiguadores").price(new BigDecimal(69.99))
                 .description("Amortiguadores para coche AUDI A3").build();
-        Replacement replacement = this.webTestClient
+        this.webTestClient
                 .post()
                 .uri(REPLACEMENTS)
                 .body(Mono.just(replacementCreation), ReplacementCreation.class)
@@ -100,31 +101,8 @@ public class ReplacementResourceIT {
                     assertEquals("Amortiguadores", replacementCreated.getName());
                     assertEquals(new BigDecimal(69.99).toString(), replacementCreated.getPrice().toString());
                     assertEquals("Amortiguadores para coche AUDI A3", replacementCreated.getDescription());
-                }).returnResult().getResponseBody();
-        assertNotNull(replacement);
-
-        this.webTestClient
-                .delete()
-                .uri(REPLACEMENTS + REFERENCE, "99999999")
-                .exchange()
-                .expectStatus().isOk();
-
-        this.webTestClient
-                .get()
-                .uri(REPLACEMENTS + REFERENCE, "99999999")
-                .exchange()
-                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND);
-
-    }
-    //TODO: make a test deleting conflict exception when replacement is used in any revision of any vehicle
-
-    @Test
-    void testDeleteNotFoundException() {
-        this.webTestClient
-                .delete()
-                .uri(REPLACEMENTS + REFERENCE, "$$$$$$$$")
-                .exchange()
-                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND);
+                    assertTrue(replacementCreated.getActive());
+                });
     }
 
     @Test

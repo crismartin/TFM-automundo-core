@@ -27,9 +27,10 @@ public class ReplacementResource {
     }
 
     @GetMapping(SEARCH)
-    public Flux<ReplacementLineDto> findByReferenceAndNameAndDescriptionNullSafe(
-            @RequestParam(required = false) String reference, @RequestParam(required = false) String name, @RequestParam(required = false) String description) {
-        return this.replacementService.findByReferenceAndNameAndDescriptionNullSafe(reference, name, description)
+    public Flux<ReplacementLineDto> findByReferenceAndNameAndDescriptionAndActiveNullSafe(
+            @RequestParam(required = false) String reference, @RequestParam(required = false) String name,
+            @RequestParam(required = false) String description, @RequestParam(required = false) Boolean active) {
+        return this.replacementService.findByReferenceAndNameAndDescriptionAndActiveNullSafe(reference, name, description, active)
                 .map(ReplacementLineDto::new);
     }
 
@@ -46,10 +47,5 @@ public class ReplacementResource {
     @PutMapping(REFERENCE)
     public Mono<Replacement> update(@PathVariable String reference, @Valid @RequestBody ReplacementUpdate replacementUpdate) {
         return this.replacementService.update(reference, replacementUpdate);
-    }
-
-    @DeleteMapping(REFERENCE)
-    public Mono<Void> delete(@PathVariable String reference) {
-        return this.replacementService.delete(reference);
     }
 }

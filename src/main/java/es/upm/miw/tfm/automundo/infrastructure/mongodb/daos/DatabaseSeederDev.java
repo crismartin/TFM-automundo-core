@@ -62,19 +62,24 @@ public class DatabaseSeederDev {
 
         VehicleTypeEntity[] vehicleTypes = {
                 VehicleTypeEntity.builder().reference("11111111")
-                        .name("Gobierno central").description("Vehículos del gobierno central").build(),
+                        .name("Gobierno central").description("Vehículos del gobierno central")
+                        .active(true).build(),
                 VehicleTypeEntity.builder().reference("22222222")
-                        .name("Gobierno autonómico").description("Vehículos del gobierno autonómico").build(),
+                        .name("Gobierno autonómico").description("Vehículos del gobierno autonómico")
+                        .active(false).build(),
                 VehicleTypeEntity.builder().reference("33333333")
-                        .name("VTC").description("Vehículos VTC").build(),
+                        .name("VTC").description("Vehículos VTC")
+                        .active(true).build(),
                 VehicleTypeEntity.builder().reference("44444444")
-                        .name("Ayuntamiento sanidad").description("Ambulancias, UVI Móviles, SUMA").build(),
+                        .name("Ayuntamiento sanidad").description("Ambulancias, UVI Móviles, SUMA")
+                        .active(false).build(),
                 VehicleTypeEntity.builder().reference("55555555")
-                        .name("Ayuntamiento protección").description("Policía, bomberos ...").build(),
+                        .name("Ayuntamiento protección").description("Policía, bomberos ...")
+                        .active(true).build(),
 
         };
         this.vehicleTypeDao.saveAll(List.of(vehicleTypes));
-        LogManager.getLogger(this.getClass()).warn("        ------- vehicle-types");
+        LogManager.getLogger(this.getClass()).warn("        ------- ownerTypes");
 
         VehicleEntity[] vehicles = {
                 VehicleEntity.builder().customer(customers[0]).registerDate(LocalDateTime.now()).lastViewDate(LocalDateTime.now())
@@ -114,8 +119,6 @@ public class DatabaseSeederDev {
         };
         this.replacementDao.saveAll(List.of(replacements));
         LogManager.getLogger(this.getClass()).warn("        ------- replacements");
-
-
     }
 
 }

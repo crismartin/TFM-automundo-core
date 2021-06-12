@@ -24,8 +24,9 @@ public class VehicleTypePersistenceMongodb implements VehicleTypePersistence {
     }
 
     @Override
-    public Flux<VehicleType> findByReferenceAndNameAndDescriptionNullSafe(String reference, String name, String description) {
-        return this.vehicleTypeReactive.findByReferenceAndNameAndDescriptionNullSafe(reference, name, description)
+    public Flux<VehicleType> findByReferenceAndNameAndDescriptionAndActiveNullSafe(String reference, String name,
+                                                                                   String description, Boolean active) {
+        return this.vehicleTypeReactive.findByReferenceAndNameAndDescriptionAndActiveNullSafe(reference, name, description, active)
                 .map(VehicleTypeEntity::toVehicleType);
     }
 

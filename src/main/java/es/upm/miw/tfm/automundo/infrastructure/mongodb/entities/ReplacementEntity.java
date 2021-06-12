@@ -26,9 +26,11 @@ public class ReplacementEntity {
     private String name;
     private BigDecimal price;
     private String description;
+    private Boolean active;
 
     public ReplacementEntity(ReplacementCreation replacementCreation){
         BeanUtils.copyProperties(replacementCreation, this);
+        this.active = true;
     }
 
     public Replacement toReplacement() {

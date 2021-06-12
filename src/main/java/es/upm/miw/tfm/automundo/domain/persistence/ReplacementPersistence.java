@@ -9,8 +9,8 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface ReplacementPersistence {
-    Flux<Replacement> findByReferenceAndNameAndDescriptionNullSafe(
-            String reference, String name, String description);
+    Flux<Replacement> findByReferenceAndNameAndDescriptionAndActiveNullSafe(
+            String reference, String name, String description, Boolean active);
 
     Mono<Replacement> findByReference(String reference);
 
@@ -18,5 +18,4 @@ public interface ReplacementPersistence {
 
     Mono<Replacement> update(String reference, ReplacementUpdate replacementUpdate);
 
-    Mono<Void> delete(String reference);
 }
