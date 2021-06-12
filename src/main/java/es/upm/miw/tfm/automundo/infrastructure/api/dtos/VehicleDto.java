@@ -21,13 +21,13 @@ public class VehicleDto {
     private LocalDateTime registerDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime lastViewDate;
-    private OwnerTypeDto ownerType;
+    private VehicleTypeDto vehicleType;
     private String ownerNumber;
 
     public VehicleDto(Vehicle vehicle) {
         BeanUtils.copyProperties(vehicle, this);
-        if(vehicle.getOwnerType() != null){
-            ownerType = new OwnerTypeDto(vehicle.getOwnerType());
+        if(vehicle.getVehicleType() != null){
+            vehicleType = new VehicleTypeDto(vehicle.getVehicleType());
         }
     }
 }
