@@ -2,6 +2,7 @@ package es.upm.miw.tfm.automundo.domain.persistence;
 
 import es.upm.miw.tfm.automundo.domain.model.Technician;
 import es.upm.miw.tfm.automundo.domain.model.TechnicianCreation;
+import es.upm.miw.tfm.automundo.domain.model.TechnicianUpdate;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -15,4 +16,6 @@ public interface TechnicianPersistence {
     Mono<Technician> findByIdentificationId(String identification);
 
     Mono<Technician> create(TechnicianCreation technicianCreation);
+
+    Mono<Technician> update(String identification, TechnicianUpdate technicianUpdate);
 }
