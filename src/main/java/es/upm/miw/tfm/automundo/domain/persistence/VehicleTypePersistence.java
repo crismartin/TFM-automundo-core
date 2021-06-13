@@ -17,4 +17,6 @@ public interface VehicleTypePersistence {
     Mono<VehicleType> create(VehicleTypeCreation vehicleTypeCreation);
 
     Mono<VehicleType> update(String reference, VehicleTypeUpdate vehicleTypeUpdate);
+
+    Flux<VehicleType> findAllActive();
 }

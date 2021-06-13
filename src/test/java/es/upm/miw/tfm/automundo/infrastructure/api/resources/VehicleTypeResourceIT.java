@@ -1,6 +1,8 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 import es.upm.miw.tfm.automundo.domain.model.*;
+import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleLineDto;
+import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeDto;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeLineDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,7 @@ import static es.upm.miw.tfm.automundo.infrastructure.api.resources.VehicleTypeR
 import static org.junit.jupiter.api.Assertions.*;
 
 @RestTestConfig
-public class VehicleTypeResourceIT {
+class VehicleTypeResourceIT {
     @Autowired
     private WebTestClient webTestClient;
     //@Autowired
@@ -121,5 +123,15 @@ public class VehicleTypeResourceIT {
                 .body(Mono.just(vehicleTypeCreation), VehicleTypeCreation.class)
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    void testFindAllActive() {
+        this.webTestClient
+                .get()
+                .uri(VEHICLE_TYPES)
+                .exchange()
+                .expectBodyList(VehicleTypeDto.class)
+                .value(Assertions::assertNotNull);
     }
 }

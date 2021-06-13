@@ -4,6 +4,7 @@ import es.upm.miw.tfm.automundo.domain.model.VehicleType;
 import es.upm.miw.tfm.automundo.domain.model.VehicleTypeCreation;
 import es.upm.miw.tfm.automundo.domain.model.VehicleTypeUpdate;
 import es.upm.miw.tfm.automundo.domain.services.VehicleTypeService;
+import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeDto;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +48,11 @@ public class VehicleTypeResource {
     @PutMapping(REFERENCE)
     public Mono<VehicleType> update(@PathVariable String reference, @Valid @RequestBody VehicleTypeUpdate vehicleTypeUpdate) {
         return this.vehicleTypeService.update(reference, vehicleTypeUpdate);
+    }
+
+    @GetMapping()
+    public Flux<VehicleTypeDto> findAllActive(){
+        return this.vehicleTypeService.findAllActive()
+                .map(VehicleTypeDto::new);
     }
 }

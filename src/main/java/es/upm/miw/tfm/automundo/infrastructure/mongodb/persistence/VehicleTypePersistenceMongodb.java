@@ -63,4 +63,11 @@ public class VehicleTypePersistenceMongodb implements VehicleTypePersistence {
                         new ConflictException("Vehicle type reference already exists : " + reference)
                 ));
     }
+
+    @Override
+    public Flux<VehicleType> findAllActive() {
+        return this.vehicleTypeReactive.findAll()
+                .filter(vehicleTypeEntity -> vehicleTypeEntity.getActive())
+                .map(VehicleTypeEntity::toVehicleType);
+    }
 }
