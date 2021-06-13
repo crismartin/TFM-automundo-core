@@ -12,4 +12,6 @@ public interface VehiclePersistence {
     Mono<Vehicle> findByReference(String reference);
 
     Mono<Vehicle> create(Vehicle vehicle);
+
+    Mono<Vehicle> update(Vehicle vehicle);
 }

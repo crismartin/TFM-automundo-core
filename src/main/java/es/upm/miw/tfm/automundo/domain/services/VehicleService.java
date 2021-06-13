@@ -29,4 +29,8 @@ public class VehicleService {
     public Mono<Vehicle> create(Vehicle vehicle) {
         return vehiclePersistence.create(vehicle);
     }
+
+    public Mono<Vehicle> update(Vehicle vehicle) {
+        return vehiclePersistence.update(vehicle);
+    }
 }

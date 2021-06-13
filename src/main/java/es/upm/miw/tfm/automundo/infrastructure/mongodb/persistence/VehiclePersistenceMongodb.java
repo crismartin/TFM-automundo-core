@@ -85,4 +85,34 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
                 .flatMap(vehicleEntity1 -> this.vehicleReactive.save(vehicleEntity1))
                 .map(VehicleEntity::toVehicle);
     }
+
+    @Override
+    public Mono<Vehicle> update(Vehicle vehicle) {
+        VehicleEntity vehicleEntity = new VehicleEntity(vehicle);
+
+        return assertBinNotExist(vehicle)
+                .then( findCustomer(vehicle.getIdentificationCustomer())
+                        .map(customerEntity -> {
+                            vehicleEntity.setCustomer(customerEntity);
+                            return vehicleEntity;
+                        })
+                )
+                .flatMap(vehicleEntity1 ->
+                    findVehicleType(vehicle.getVehicleTypeReference())
+                            .map(vehicleTypeEntity -> {
+                                vehicleEntity1.setVehicleType(vehicleTypeEntity);
+                                return vehicleEntity1;
+                            })
+                )
+                .flatMap(vehicleEntity1 -> this.vehicleReactive.findByReference(vehicleEntity1.getReference()))
+                .switchIfEmpty(Mono.error(new NotFoundException("Cannot update. Non existent vehicle " +
+                        "with reference: " + vehicleEntity.getReference())))
+                .flatMap(vehicleEntity1 -> {
+                    vehicleEntity.setId(vehicleEntity1.getId());
+                    vehicleEntity.setRegisterDate(vehicleEntity1.getRegisterDate());
+                    vehicleEntity.setLastViewDate(vehicleEntity1.getLastViewDate());
+                    return this.vehicleReactive.save(vehicleEntity);
+                })
+                .map(VehicleEntity::toVehicle);
+    }
 }

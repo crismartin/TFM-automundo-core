@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Vehicle {
-    private String id;
     private String bin;
     private String reference;
     private String plate;

@@ -45,4 +45,12 @@ public class VehicleResource {
                 .map(VehicleDto::new);
     }
 
+    @PutMapping(REFERENCE)
+    public Mono<VehicleDto> update(@Valid @RequestBody VehicleNewDto vehicleUpdate, @PathVariable String reference){
+        Vehicle vehicle = new Vehicle(vehicleUpdate);
+        vehicle.setReference(reference);
+        return this.vehicleService.update(vehicle)
+                .map(VehicleDto::new);
+    }
+
 }
