@@ -5,7 +5,6 @@ import es.upm.miw.tfm.automundo.domain.model.Customer;
 import es.upm.miw.tfm.automundo.domain.model.Vehicle;
 import es.upm.miw.tfm.automundo.domain.model.VehicleType;
 import es.upm.miw.tfm.automundo.domain.persistence.VehiclePersistence;
-import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.VehicleEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
@@ -22,6 +21,7 @@ class VehiclePersistenceMongodbIT {
 
     private static final String IDENTIFICATION_CUSTOMER_CREATION = "33333333-A";
     private static final String REFERENCE_VEHICLE_TYPE = "11111111";
+    private static final String REFERENCE_VEHICLE = "ref-2002";
 
     @Test
     void testFindVehiclesByIdCustomer() {
@@ -72,7 +72,7 @@ class VehiclePersistenceMongodbIT {
                 .create(this.vehiclePersistence.create(vehicleDummy))
                 .expectNextMatches(vehicle -> {
                     assertNotNull(vehicle);
-                    assertNotNull(vehicle.getId());
+                    assertNotNull(vehicle.getReference());
                     return true;
                 })
                 .thenCancel()
@@ -142,6 +142,44 @@ class VehiclePersistenceMongodbIT {
         StepVerifier
                 .create(this.vehiclePersistence.create(vehicleDummy))
                 .expectError()
+                .verify();
+    }
+
+    @Test
+    void testUpdateOk(){
+        Customer customer = Customer.builder()
+                .identificationId(IDENTIFICATION_CUSTOMER_CREATION)
+                .build();
+
+        VehicleType vehicleType = VehicleType.builder()
+                .reference(REFERENCE_VEHICLE_TYPE)
+                .build();
+
+        Vehicle vehicleDummy = Vehicle.builder()
+                .reference(REFERENCE_VEHICLE)
+                .customer(customer)
+                .model("TESTING MODEL").yearRelease(2030).plate("ED-202").bin("vh-500")
+                .vehicleType(vehicleType)
+                .build();
+
+        StepVerifier
+                .create(this.vehiclePersistence.update(vehicleDummy))
+                .expectNextMatches(vehicle -> {
+                    assertNotNull(vehicle);
+                    assertNotNull(vehicle.getRegisterDate());
+                    assertNotNull(vehicle.getLastViewDate());
+
+                    assertEquals(vehicleDummy.getIdentificationCustomer(), vehicle.getIdentificationCustomer());
+                    assertEquals(vehicleDummy.getReference(), vehicle.getReference());
+                    assertEquals(vehicleDummy.getBin(), vehicle.getBin());
+                    assertEquals(vehicleDummy.getPlate(), vehicle.getPlate());
+                    assertEquals(vehicleDummy.getVehicleTypeReference(), vehicle.getVehicleTypeReference());
+                    assertEquals(vehicleDummy.getYearRelease(), vehicle.getYearRelease());
+                    assertEquals(vehicleDummy.getModel(), vehicle.getModel());
+
+                    return true;
+                })
+                .thenCancel()
                 .verify();
     }
 }

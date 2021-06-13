@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class VehicleDto {
-    private String id;
     private String reference;
     private String bin;
     private String plate;
