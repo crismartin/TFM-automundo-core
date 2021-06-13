@@ -134,7 +134,7 @@ class VehiclePersistenceMongodbIT {
                 .build();
 
         Vehicle vehicleDummy = Vehicle.builder().customer(customer).registerDate(LocalDateTime.now()).lastViewDate(LocalDateTime.now())
-                .model("MERCEDES BENZ CLASE A").yearRelease(2020).plate("EM-2020").bin("vh-1001")
+                .model("MERCEDES BENZ CLASE A").yearRelease(2020).plate("EM-2020").bin("vh-100")
                 .reference("TEST-ref-1001")
                 .vehicleType(vehicleType)
                 .build();

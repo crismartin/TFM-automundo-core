@@ -93,7 +93,7 @@ class VehicleResourceIT {
 
         VehicleNewDto vehicleCreation = VehicleNewDto.builder()
                 .model("MERCEDES BENZ CLASE A").yearRelease(2020)
-                .plate("MBA-202").bin("vh-1001").vehicleType(vehicleType)
+                .plate("MBA-202").bin("vh-100").vehicleType(vehicleType)
                 .typeNumber("GOB-111")
                 .identificationCustomer(IDENTIFICATION_CUSTOMER_CREATION)
                 .build();
@@ -114,7 +114,7 @@ class VehicleResourceIT {
 
         VehicleNewDto vehicleCreation = VehicleNewDto.builder()
                 .model("MERCEDES BENZ CLASE A").yearRelease(2020)
-                .plate("MBA-202").bin("vh-1001").vehicleType(vehicleType)
+                .plate("MBA-202").bin("vh-100").vehicleType(vehicleType)
                 .typeNumber("GOB-111")
                 .identificationCustomer(IDENTIFICATION_CUSTOMER_CREATION)
                 .build();
@@ -135,7 +135,7 @@ class VehicleResourceIT {
 
         VehicleNewDto vehicleCreation = VehicleNewDto.builder()
                 .model("MERCEDES BENZ CLASE A").yearRelease(2020)
-                .plate("MBA-202").bin("vh-1001").vehicleType(vehicleType)
+                .plate("MBA-202").bin("vh-100").vehicleType(vehicleType)
                 .typeNumber("GOB-111")
                 .identificationCustomer("Dummy1234")
                 .build();
