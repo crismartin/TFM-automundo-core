@@ -2,16 +2,15 @@ package es.upm.miw.tfm.automundo.infrastructure.api.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import es.upm.miw.tfm.automundo.domain.model.Technician;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-@Getter
+@AllArgsConstructor
+@Builder
 public class TechnicianLineDto {
     private String identificationId;
     private String completeName;

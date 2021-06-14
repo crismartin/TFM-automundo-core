@@ -1,6 +1,5 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.entities;
 
-import es.upm.miw.tfm.automundo.domain.model.ReplacementCreation;
 import es.upm.miw.tfm.automundo.domain.model.Technician;
 import es.upm.miw.tfm.automundo.domain.model.TechnicianCreation;
 import lombok.AllArgsConstructor;
@@ -37,6 +36,10 @@ public class TechnicianEntity {
         BeanUtils.copyProperties(technicianCreation, this);
         this.registrationDate = LocalDateTime.now();
         this.active = true;
+    }
+
+    public TechnicianEntity(Technician technician){
+        BeanUtils.copyProperties(technician, this);
     }
 
     public Technician toTechnician() {

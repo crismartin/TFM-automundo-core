@@ -5,6 +5,7 @@ import es.upm.miw.tfm.automundo.domain.persistence.RevisionPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class RevisionService {
@@ -18,5 +19,9 @@ public class RevisionService {
 
     public Flux<Revision> findAllByVehicleReference(String reference) {
         return revisionPersistence.findAllByVehicleReference(reference);
+    }
+
+    public Mono<Revision> create(Revision revision) {
+        return revisionPersistence.create(revision);
     }
 }

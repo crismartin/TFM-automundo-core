@@ -28,10 +28,12 @@ public class RevisionLineDto {
 
     public RevisionLineDto(Revision revision){
         BeanUtils.copyProperties(revision, this);
-        if(revision != null && revision.getTechnician() != null){
-            technicianName = revision.getTechnicianCompleteName();
+        if(revision != null){
+            if(revision.getTechnician() != null){
+                technicianName = revision.getTechnicianCompleteName();
+            }
+            statusName = revision.getStatusName();
         }
-        statusName = revision.getStatusName();
     }
 
 }

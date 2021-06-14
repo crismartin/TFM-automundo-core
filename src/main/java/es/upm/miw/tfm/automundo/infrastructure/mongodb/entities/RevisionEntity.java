@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -29,6 +30,8 @@ public class RevisionEntity {
     private String diagnostic;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime registerDate;
+    private Integer initialKilometers;
+    private Integer workedHours;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime departureDate;
     @DBRef(lazy = true)
@@ -37,6 +40,14 @@ public class RevisionEntity {
     private StatusRevision status;
     @DBRef(lazy = true)
     private VehicleEntity vehicleEntity;
+
+    public RevisionEntity(Revision revision){
+        BeanUtils.copyProperties(revision, this);
+        if(revision != null){
+            this.technicianEntity = revision.getTechnician() != null ? new TechnicianEntity(revision.getTechnician()) : null;
+            this.vehicleEntity = revision.getVehicle() != null ? new VehicleEntity(revision.getVehicle()) : null;
+        }
+    }
 
     public Revision toRevision(){
         Revision revision = new Revision();
@@ -52,5 +63,10 @@ public class RevisionEntity {
 
     public String getVehicleReference(){
         return this.vehicleEntity.getReference();
+    }
+
+    public void setFieldsCreation() {
+        reference = UUID.randomUUID().toString();
+        status = StatusRevision.POR_CONFIRMAR;
     }
 }
