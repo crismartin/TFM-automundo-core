@@ -1,5 +1,6 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.daos;
 
+import es.upm.miw.tfm.automundo.infrastructure.enums.StatusRevision;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.*;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.*;
 import org.apache.logging.log4j.LogManager;
@@ -17,18 +18,21 @@ public class DatabaseSeederDev {
     private ReplacementDao replacementDao;
     private VehicleTypeDao vehicleTypeDao;
     private TechnicianDao technicianDao;
+    private RevisionDao revisionDao;
 
     private DatabaseStarting databaseStarting;
 
     @Autowired
     public DatabaseSeederDev(DatabaseStarting databaseStarting, CustomerDao customerDao, VehicleDao vehicleDao,
-                             ReplacementDao replacementDao, VehicleTypeDao vehicleTypeDao, TechnicianDao technicianDao) {
+                             ReplacementDao replacementDao, VehicleTypeDao vehicleTypeDao, TechnicianDao technicianDao,
+                             RevisionDao revisionDao) {
         this.databaseStarting = databaseStarting;
         this.customerDao = customerDao;
         this.vehicleDao = vehicleDao;
         this.replacementDao = replacementDao;
         this.vehicleTypeDao = vehicleTypeDao;
         this.technicianDao = technicianDao;
+        this.revisionDao = revisionDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
 
@@ -39,6 +43,7 @@ public class DatabaseSeederDev {
 
     private void deleteAllAndInitialize() {
         this.customerDao.deleteAll();
+        this.revisionDao.deleteAll();
         this.vehicleDao.deleteAll();
         this.replacementDao.deleteAll();
         this.vehicleTypeDao.deleteAll();
@@ -139,6 +144,35 @@ public class DatabaseSeederDev {
         };
         this.technicianDao.saveAll(List.of(technicians));
         LogManager.getLogger(this.getClass()).warn("        ------- technicians");
+
+        RevisionEntity[] revisions = {
+                RevisionEntity.builder()
+                        .id("revision-id-1")
+                        .diagnostic("Cambio en filtro de aceite").registerDate(LocalDateTime.now())
+                        .technicianEntity(technicians[0]).status(StatusRevision.POR_CONFIRMAR).cost(new BigDecimal("50.00"))
+                        .vehicleEntity(vehicles[0])
+                        .reference("rev-1").build(),
+                RevisionEntity.builder()
+                        .id("revision-id-2")
+                        .diagnostic("Cambio en filtro de polen").registerDate(LocalDateTime.now())
+                        .technicianEntity(technicians[0]).status(StatusRevision.EN_MANTENIMIENTO).cost(new BigDecimal("60.00"))
+                        .vehicleEntity(vehicles[0])
+                        .reference("rev-2").build(),
+                RevisionEntity.builder()
+                        .id("revision-id-3")
+                        .diagnostic("Cambio en filtro de agua").registerDate(LocalDateTime.now())
+                        .technicianEntity(technicians[1]).status(StatusRevision.NEGADO).departureDate(LocalDateTime.now()).cost(new BigDecimal("70.00"))
+                        .vehicleEntity(vehicles[0])
+                        .reference("rev-3").build(),
+                RevisionEntity.builder()
+                        .id("revision-id-4")
+                        .diagnostic("Cambio en filtro de otra cosa").registerDate(LocalDateTime.now())
+                        .technicianEntity(technicians[1]).status(StatusRevision.FINALIZADO).departureDate(LocalDateTime.now()).cost(new BigDecimal("80.00"))
+                        .vehicleEntity(vehicles[0])
+                        .reference("rev-4").build()
+        };
+        this.revisionDao.saveAll(List.of(revisions));
+        LogManager.getLogger(this.getClass()).warn("        ------- revisions");
     }
 
 }

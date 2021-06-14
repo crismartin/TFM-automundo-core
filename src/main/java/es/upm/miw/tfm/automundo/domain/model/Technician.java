@@ -30,4 +30,8 @@ public class Technician {
     private String surName;
     private String secondSurName;
     private Boolean active;
+
+    public String getCompleteName(){
+        return getName() + " " + getSurName() + " " + getSecondSurName();
+    }
 }
