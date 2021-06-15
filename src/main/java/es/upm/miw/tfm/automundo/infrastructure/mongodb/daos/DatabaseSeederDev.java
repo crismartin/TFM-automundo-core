@@ -87,7 +87,7 @@ public class DatabaseSeederDev {
 
         };
         this.vehicleTypeDao.saveAll(List.of(vehicleTypes));
-        LogManager.getLogger(this.getClass()).warn("        ------- ownerTypes");
+        LogManager.getLogger(this.getClass()).warn("        ------- vehicle types");
 
         VehicleEntity[] vehicles = {
                 VehicleEntity.builder().customer(customers[0]).registerDate(LocalDateTime.now()).lastViewDate(LocalDateTime.now())
@@ -107,22 +107,22 @@ public class DatabaseSeederDev {
         ReplacementEntity[] replacements = {
                 ReplacementEntity.builder().reference("11111111").name("Pastillas de freno")
                         .price(new BigDecimal(75.5)).description("Pastillas de freno traseras para coche HONDA Civic")
-                        .build(),
+                        .active(true).build(),
                 ReplacementEntity.builder().reference("22222222").name("Pastillas de freno")
                         .price(new BigDecimal(55.5)).description("Pastillas de freno delanteras para coche HONDA Civic")
-                        .build(),
+                        .active(false).build(),
                 ReplacementEntity.builder().reference("33333333").name("Discos de freno")
                         .price(new BigDecimal(30)).description("Pastillas de freno delanteras para coche RENAULT Clio")
-                        .build(),
+                        .active(true).build(),
                 ReplacementEntity.builder().reference("44444444").name("Alternador")
                         .price(new BigDecimal(49.99)).description("Alternador para motocicleta BMW Z45X")
-                        .build(),
+                        .active(false).build(),
                 ReplacementEntity.builder().reference("55555555").name("Fusibles")
                         .price(new BigDecimal(75.5)).description("Fusibles para motocicleta KAWASAKI RT285")
-                        .build(),
+                        .active(true).build(),
                 ReplacementEntity.builder().reference("66666666").name("Motor de arranque")
                         .price(new BigDecimal(130)).description("Fusibles para coche SEAT León")
-                        .build(),
+                        .active(false).build(),
 
         };
         this.replacementDao.saveAll(List.of(replacements));
