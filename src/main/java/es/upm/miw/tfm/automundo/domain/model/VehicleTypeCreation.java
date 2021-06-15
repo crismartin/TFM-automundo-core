@@ -4,11 +4,11 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
+@Setter
 public class VehicleTypeCreation {
     @NotBlank
     private String reference;

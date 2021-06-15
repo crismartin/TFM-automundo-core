@@ -4,11 +4,9 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
+@Setter
 public class ReplacementUpdate {
     private String name;
     private BigDecimal price;

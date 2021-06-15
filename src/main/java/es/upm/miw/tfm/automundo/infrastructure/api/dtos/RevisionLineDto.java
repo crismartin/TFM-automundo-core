@@ -2,7 +2,6 @@ package es.upm.miw.tfm.automundo.infrastructure.api.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import es.upm.miw.tfm.automundo.domain.model.Revision;
-import es.upm.miw.tfm.automundo.infrastructure.enums.StatusRevision;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

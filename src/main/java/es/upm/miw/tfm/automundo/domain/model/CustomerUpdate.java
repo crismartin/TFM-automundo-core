@@ -5,11 +5,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
+@Setter
 public class CustomerUpdate {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastVisitDate;

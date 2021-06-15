@@ -1,6 +1,5 @@
 package es.upm.miw.tfm.automundo.domain.services;
 
-import es.upm.miw.tfm.automundo.domain.model.Replacement;
 import es.upm.miw.tfm.automundo.domain.model.Technician;
 import es.upm.miw.tfm.automundo.domain.model.TechnicianCreation;
 import es.upm.miw.tfm.automundo.domain.model.TechnicianUpdate;

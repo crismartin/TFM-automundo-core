@@ -5,11 +5,11 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
+@Setter
 public class ReplacementCreation {
     @NotBlank
     private String reference;

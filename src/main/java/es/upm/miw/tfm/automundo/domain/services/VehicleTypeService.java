@@ -4,13 +4,10 @@ import es.upm.miw.tfm.automundo.domain.model.VehicleType;
 import es.upm.miw.tfm.automundo.domain.model.VehicleTypeCreation;
 import es.upm.miw.tfm.automundo.domain.model.VehicleTypeUpdate;
 import es.upm.miw.tfm.automundo.domain.persistence.VehicleTypePersistence;
-import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 @Service
 public class VehicleTypeService {
