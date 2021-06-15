@@ -2,11 +2,10 @@ package es.upm.miw.tfm.automundo.domain.model;
 
 import lombok.*;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
+@Setter
 public class TechnicianUpdate {
     private String ssNumber;
     private String mobile;

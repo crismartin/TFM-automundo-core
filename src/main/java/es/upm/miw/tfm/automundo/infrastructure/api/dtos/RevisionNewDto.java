@@ -1,6 +1,5 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.dtos;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
