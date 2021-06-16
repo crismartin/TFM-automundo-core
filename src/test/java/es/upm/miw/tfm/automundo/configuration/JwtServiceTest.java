@@ -16,7 +16,7 @@ class JwtServiceTest {
 
     @Test
     void testCreateToken() {
-        String token = jwtService.createToken("666666000", "adm", Role.ADMIN.name());
+        String token = jwtService.createToken("$$$$$$$", "adm", Role.ADMIN.name());
         assertFalse(token.isEmpty());
         LogManager.getLogger(this.getClass()).info("token:" + token);
     }

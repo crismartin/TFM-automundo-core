@@ -15,7 +15,7 @@ public class WebFluxConfiguration implements WebFluxConfigurer {
                 .addMapping("/**")
                 .allowedMethods("*")
                 .allowedOrigins("*")
-                .maxAge(3600);
+                .maxAge(36000);
     }
 
 }
