@@ -226,4 +226,30 @@ class RevisionResourceIT {
                 .expectStatus().is4xxClientError();
     }
 
+    @Test
+    void testFindRevisionByReferenceOk() {
+        String reference = "rev-1";
+        this.restClientTestService.loginAdmin(webTestClient)
+                .get()
+                .uri(REVISIONS + REFERENCE, reference)
+                .exchange()
+                .expectBody(Revision.class)
+                .value(Assertions::assertNotNull)
+                .value(revision -> {
+                    assertNotNull(revision);
+                    assertNotNull(revision.getReference());
+
+                    assertEquals(reference, revision.getReference());
+                }).returnResult().getResponseBody();
+    }
+
+    @Test
+    void testFindRevisionErrorByReferenceUnknown() {
+        String reference = "rev-unknown";
+        this.restClientTestService.loginAdmin(webTestClient)
+                .get()
+                .uri(REVISIONS + REFERENCE, reference)
+                .exchange()
+                .expectStatus().is4xxClientError();
+    }
 }

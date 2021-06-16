@@ -12,4 +12,6 @@ public interface RevisionPersistence {
     Mono<Revision> create(Revision revision);
 
     Mono<Revision> createReplacementsUsed(Revision revision);
+
+    Mono<Revision> findByReference(String reference);
 }

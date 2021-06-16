@@ -6,7 +6,6 @@ import es.upm.miw.tfm.automundo.domain.persistence.RevisionPersistence;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.*;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementUsedEntity;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.RevisionEntity;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -64,7 +63,7 @@ public class RevisionPersistenceMongodb implements RevisionPersistence {
                 .map(RevisionEntity::toRevision);
     }
 
-    private Mono<RevisionEntity> findByReference(String reference){
+    private Mono<RevisionEntity> findEntityByReference(String reference){
         return revisionReactive.findByReference(reference)
                 .switchIfEmpty(Mono.error(new NotFoundException("Revision Reference: " + reference)));
     }
@@ -72,7 +71,7 @@ public class RevisionPersistenceMongodb implements RevisionPersistence {
     @Override
     public Mono<Revision> createReplacementsUsed(Revision revision) {
 
-        return findByReference(revision.getReference())
+        return findEntityByReference(revision.getReference())
                 .flatMap(revisionEntity ->
                     Flux.fromStream(revision.getReplacementsUsed().stream())
                         .flatMap(replacementUsed -> {
@@ -95,6 +94,21 @@ public class RevisionPersistenceMongodb implements RevisionPersistence {
                 .map(replacementUseds -> {
                     revision.setReplacementsUsed(replacementUseds);
                     return revision;
+                });
+    }
+
+    @Override
+    public Mono<Revision> findByReference(String reference) {
+        return findEntityByReference(reference)
+                .flatMap(revisionEntity -> {
+                    Revision revision = revisionEntity.toRevision();
+                    return this.replacementUsedReactive.findAllByRevisionEntity(revisionEntity)
+                            .map(ReplacementUsedEntity::toReplacementUsed)
+                            .collectList()
+                            .map(replacementUseds -> {
+                                revision.setReplacementsUsed(replacementUseds);
+                                return revision;
+                            });
                 });
     }
 }

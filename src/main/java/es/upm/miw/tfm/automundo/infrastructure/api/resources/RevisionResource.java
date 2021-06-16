@@ -22,6 +22,7 @@ public class RevisionResource {
     public static final String REVISIONS = "/revisions";
     public static final String VEHICLE_REFERENCE = "/vehicle/{reference}";
     public static final String REPLACEMENTS_USED = "/replacements-used";
+    public static final String REFERENCE = "/{reference}";
 
     private RevisionService revisionService;
 
@@ -49,5 +50,10 @@ public class RevisionResource {
                 .replacementsUsed(replacementsUsed.getReplacementsUsed())
                 .build();
         return revisionService.createReplacementsUsed(revision);
+    }
+
+    @GetMapping(REFERENCE)
+    public Mono<Revision> findByReference(@PathVariable String reference) {
+        return revisionService.findByReference(reference);
     }
 }

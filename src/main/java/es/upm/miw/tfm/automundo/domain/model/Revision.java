@@ -24,6 +24,7 @@ public class Revision {
     private LocalDateTime registerDate;
     private Integer initialKilometers;
     private Integer workedHours;
+    private String workDescription;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime departureDate;
     private Technician technician;
