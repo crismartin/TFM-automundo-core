@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @Builder
@@ -29,6 +30,7 @@ public class Revision {
     private BigDecimal cost;
     private StatusRevision status;
     private Vehicle vehicle;
+    private List<ReplacementUsed> replacementsUsed;
 
     public Revision(RevisionNewDto revisionNewDto){
         BeanUtils.copyProperties(revisionNewDto, this);
@@ -37,11 +39,15 @@ public class Revision {
                     .identificationId(revisionNewDto.getTechnicianIdentification())
                     .build();
         }
-        vehicle = Vehicle.builder().reference(revisionNewDto.getVehicleReference()).build();
+        if(revisionNewDto.getVehicleReference() != null){
+            vehicle = Vehicle.builder()
+                    .reference(revisionNewDto.getVehicleReference())
+                    .build();
+        }
     }
 
     public String getVehicleReference() {
-        return vehicle.getReference();
+        return vehicle != null ? vehicle.getReference() : null;
     }
 
     public String getTechnicianCompleteName(){
@@ -53,6 +59,6 @@ public class Revision {
     }
 
     public String getStatusName(){
-        return status.getName();
+        return status != null ? status.getName() : null;
     }
 }

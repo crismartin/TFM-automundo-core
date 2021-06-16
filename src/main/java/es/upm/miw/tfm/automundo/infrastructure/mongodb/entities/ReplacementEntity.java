@@ -33,6 +33,10 @@ public class ReplacementEntity {
         this.active = true;
     }
 
+    public ReplacementEntity(Replacement replacement){
+        BeanUtils.copyProperties(replacement, this);
+    }
+
     public Replacement toReplacement() {
         Replacement replacement = new Replacement();
         BeanUtils.copyProperties(this, replacement);

@@ -10,4 +10,6 @@ public interface RevisionPersistence {
     Flux<Revision> findAllByVehicleReference(String reference);
 
     Mono<Revision> create(Revision revision);
+
+    Mono<Revision> createReplacementsUsed(Revision revision);
 }
