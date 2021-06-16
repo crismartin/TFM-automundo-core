@@ -1,15 +1,15 @@
 package es.upm.miw.tfm.automundo.domain.services;
 
 import es.upm.miw.tfm.automundo.TestConfig;
-import es.upm.miw.tfm.automundo.domain.model.Revision;
-import es.upm.miw.tfm.automundo.domain.model.Technician;
-import es.upm.miw.tfm.automundo.domain.model.Vehicle;
+import es.upm.miw.tfm.automundo.domain.model.*;
 import es.upm.miw.tfm.automundo.infrastructure.enums.StatusRevision;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -130,6 +130,119 @@ class RevisionServiceIT {
 
         StepVerifier
                 .create(this.revisionService.create(revision))
+                .expectError()
+                .verify();
+    }
+
+    private void compareReplacements(ReplacementUsed replacementUsedExpected, ReplacementUsed replacementUsedActual){
+        assertEquals(replacementUsedExpected.getDiscount(), replacementUsedActual.getDiscount());
+        assertEquals(replacementUsedExpected.getQuantity(), replacementUsedActual.getQuantity());
+        assertEquals(replacementUsedExpected.getOwn(), replacementUsedActual.getOwn());
+        assertEquals(replacementUsedExpected.getPrice(), replacementUsedActual.getPrice());
+        assertEquals(replacementUsedExpected.getDiscount(), replacementUsedActual.getDiscount());
+    }
+
+    @Test
+    void testCreateReplacementsOk() {
+        ReplacementUsed[] replacementsUsed = {
+                ReplacementUsed.builder()
+                        .quantity(1)
+                        .discount(10)
+                        .own(true)
+                        .price(BigDecimal.valueOf(10.00))
+                        .replacement(Replacement.builder().reference("11111111").build())
+                        .build(),
+                ReplacementUsed.builder()
+                        .quantity(2)
+                        .discount(20)
+                        .own(false)
+                        .price(BigDecimal.valueOf(20.00))
+                        .replacement(Replacement.builder().reference("33333333").build())
+                        .build()
+        };
+
+        Revision revision = Revision.builder()
+                .reference("rev-2")
+                .replacementsUsed(List.of(replacementsUsed))
+                .build();
+
+        StepVerifier
+                .create(this.revisionService.createReplacementsUsed(revision))
+                .expectNextMatches(revisionUpdated -> {
+                    assertNotNull(revisionUpdated);
+                    assertNotNull(revisionUpdated.getReference());
+                    assertNotNull(revisionUpdated.getReplacementsUsed());
+
+                    assertEquals(revision.getReference(), revisionUpdated.getReference());
+                    assertEquals(revision.getReplacementsUsed().size(), revisionUpdated.getReplacementsUsed().size());
+
+                    for(int i = 0 ; i < revision.getReplacementsUsed().size(); i++){
+                        assertNotNull(revision.getReplacementsUsed().get(i).getReference());
+                        compareReplacements(revision.getReplacementsUsed().get(i), revisionUpdated.getReplacementsUsed().get(i));
+                    }
+
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testCreateReplacementsErrorByRevisionUnknown() {
+        ReplacementUsed[] replacementsUsed = {
+                ReplacementUsed.builder()
+                        .quantity(1)
+                        .discount(10)
+                        .own(true)
+                        .price(BigDecimal.valueOf(10.00))
+                        .replacement(Replacement.builder().reference("11111111").build())
+                        .build(),
+                ReplacementUsed.builder()
+                        .quantity(2)
+                        .discount(20)
+                        .own(false)
+                        .price(BigDecimal.valueOf(20.00))
+                        .replacement(Replacement.builder().reference("33333333").build())
+                        .build()
+        };
+
+        Revision revision = Revision.builder()
+                .reference("rev-unknown")
+                .replacementsUsed(List.of(replacementsUsed))
+                .build();
+
+        StepVerifier
+                .create(this.revisionService.createReplacementsUsed(revision))
+                .expectError()
+                .verify();
+    }
+
+    @Test
+    void testCreateReplacementsErrorByReplacementUnknown() {
+        ReplacementUsed[] replacementsUsed = {
+                ReplacementUsed.builder()
+                        .quantity(1)
+                        .discount(10)
+                        .own(true)
+                        .price(BigDecimal.valueOf(10.00))
+                        .replacement(Replacement.builder().reference("ref-unknown").build())
+                        .build(),
+                ReplacementUsed.builder()
+                        .quantity(2)
+                        .discount(20)
+                        .own(false)
+                        .price(BigDecimal.valueOf(20.00))
+                        .replacement(Replacement.builder().reference("33333333").build())
+                        .build()
+        };
+
+        Revision revision = Revision.builder()
+                .reference("rev-2")
+                .replacementsUsed(List.of(replacementsUsed))
+                .build();
+
+        StepVerifier
+                .create(this.revisionService.createReplacementsUsed(revision))
                 .expectError()
                 .verify();
     }

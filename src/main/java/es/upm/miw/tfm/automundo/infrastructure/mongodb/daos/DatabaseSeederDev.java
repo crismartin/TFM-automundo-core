@@ -19,13 +19,14 @@ public class DatabaseSeederDev {
     private VehicleTypeDao vehicleTypeDao;
     private TechnicianDao technicianDao;
     private RevisionDao revisionDao;
+    private ReplacementUsedDao replacementUsedDao;
 
     private DatabaseStarting databaseStarting;
 
     @Autowired
     public DatabaseSeederDev(DatabaseStarting databaseStarting, CustomerDao customerDao, VehicleDao vehicleDao,
                              ReplacementDao replacementDao, VehicleTypeDao vehicleTypeDao, TechnicianDao technicianDao,
-                             RevisionDao revisionDao) {
+                             RevisionDao revisionDao, ReplacementUsedDao replacementUsedDao) {
         this.databaseStarting = databaseStarting;
         this.customerDao = customerDao;
         this.vehicleDao = vehicleDao;
@@ -33,6 +34,7 @@ public class DatabaseSeederDev {
         this.vehicleTypeDao = vehicleTypeDao;
         this.technicianDao = technicianDao;
         this.revisionDao = revisionDao;
+        this.replacementUsedDao = replacementUsedDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
 
@@ -43,6 +45,7 @@ public class DatabaseSeederDev {
 
     private void deleteAllAndInitialize() {
         this.customerDao.deleteAll();
+        this.replacementUsedDao.deleteAll();
         this.revisionDao.deleteAll();
         this.vehicleDao.deleteAll();
         this.replacementDao.deleteAll();
@@ -134,7 +137,7 @@ public class DatabaseSeederDev {
                         .name("Ramón").surName("López").secondSurName("Blanco").active(true).build(),
                 TechnicianEntity.builder().identificationId("22222222-T").ssNumber("SS-2222222")
                         .registrationDate(LocalDateTime.now()).leaveDate(LocalDateTime.now()).mobile("643271655")
-                        .name("Alfredo").surName("García").secondSurName("Díaz").active(false).build(),
+                        .name("Alfredo").surName("Pérez").secondSurName("Díaz").active(false).build(),
                 TechnicianEntity.builder().identificationId("33333333-T").ssNumber("SS-3333333")
                         .registrationDate(LocalDateTime.now()).mobile("655571655")
                         .name("Laura").surName("Molinero").secondSurName("Ramos").active(true).build(),
@@ -173,9 +176,31 @@ public class DatabaseSeederDev {
         };
         this.revisionDao.saveAll(List.of(revisions));
         LogManager.getLogger(this.getClass()).warn("        ------- revisions");
+
+        ReplacementUsedEntity[] replacementsUsed = {
+                ReplacementUsedEntity.builder()
+                        .id("replacementUsed-id-1")
+                        .reference("replacementUsed-ref-1")
+                        .quantity(1)
+                        .discount(10)
+                        .price(BigDecimal.valueOf(67.95))
+                        .own(true)
+                        .replacementEntity(replacements[0])
+                        .revisionEntity(revisions[0])
+                        .build(),
+                ReplacementUsedEntity.builder().id("replacementUsed-id-2")
+                        .reference("replacementUsed-ref-2")
+                        .quantity(2)
+                        .discount(10)
+                        .price(BigDecimal.valueOf(27))
+                        .own(true)
+                        .replacementEntity(replacements[2])
+                        .revisionEntity(revisions[0])
+                        .build()
+        };
+
+        this.replacementUsedDao.saveAll(List.of(replacementsUsed));
+        LogManager.getLogger(this.getClass()).warn("        ------- replacements used");
     }
 
 }
-
-
-

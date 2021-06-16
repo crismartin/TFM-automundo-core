@@ -3,22 +3,22 @@ package es.upm.miw.tfm.automundo.domain.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 @NoArgsConstructor
-@Getter
-@Setter
 @Builder
 @AllArgsConstructor
+@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Replacement {
-    @NotBlank
-    private String id;
-    @NotBlank
+public class ReplacementUsed {
     private String reference;
-    private String name;
+    private Integer quantity;
+    private Boolean own;
     private BigDecimal price;
-    private String description;
-    private Boolean active;
+    private Integer discount;
+    private Replacement replacement;
+
+    public String getReplacementReference(){
+        return replacement != null ? replacement.getReference() : null;
+    }
 }

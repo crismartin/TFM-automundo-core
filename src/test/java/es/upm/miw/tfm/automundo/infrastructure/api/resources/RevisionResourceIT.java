@@ -1,9 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 import es.upm.miw.tfm.automundo.TestConfig;
-import es.upm.miw.tfm.automundo.domain.model.Revision;
-import es.upm.miw.tfm.automundo.domain.model.Technician;
-import es.upm.miw.tfm.automundo.domain.model.Vehicle;
+import es.upm.miw.tfm.automundo.domain.model.*;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.*;
 import es.upm.miw.tfm.automundo.infrastructure.enums.StatusRevision;
 import org.junit.jupiter.api.Assertions;
@@ -12,14 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
-import static es.upm.miw.tfm.automundo.infrastructure.api.resources.RevisionResource.REVISIONS;
-import static es.upm.miw.tfm.automundo.infrastructure.api.resources.RevisionResource.VEHICLE_REFERENCE;
+import static es.upm.miw.tfm.automundo.infrastructure.api.resources.RevisionResource.*;
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.VehicleResource.CUSTOMERS_IDENTIFICATION;
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.VehicleResource.VEHICLES;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RestTestConfig
 class RevisionResourceIT {
@@ -126,6 +124,102 @@ class RevisionResourceIT {
                 .post()
                 .uri(REVISIONS)
                 .body(Mono.just(revisionNewDto), RevisionNewDto.class)
+                .exchange()
+                .expectStatus().is4xxClientError();
+    }
+
+    private void compareReplacements(ReplacementUsed replacementUsedExpected, ReplacementUsed replacementUsedActual){
+        assertEquals(replacementUsedExpected.getDiscount(), replacementUsedActual.getDiscount());
+        assertEquals(replacementUsedExpected.getQuantity(), replacementUsedActual.getQuantity());
+        assertEquals(replacementUsedExpected.getOwn(), replacementUsedActual.getOwn());
+        assertEquals(replacementUsedExpected.getPrice(), replacementUsedActual.getPrice());
+        assertEquals(replacementUsedExpected.getDiscount(), replacementUsedActual.getDiscount());
+    }
+
+    @Test
+    void testCreateReplacementsOk() {
+        ReplacementUsed[] replacementsUsed = {
+                ReplacementUsed.builder()
+                        .quantity(2).discount(20).own(false).price(BigDecimal.valueOf(20.00))
+                        .replacement(Replacement.builder().reference("11111111").build())
+                        .build(),
+                ReplacementUsed.builder()
+                        .quantity(2).discount(20).own(false).price(BigDecimal.valueOf(20.00))
+                        .replacement(Replacement.builder().reference("22222222").build())
+                        .build()
+        };
+
+        ReplacementsUsedNewDto replacementsUsedNewDto = ReplacementsUsedNewDto.builder()
+                .revisionReference("rev-2").replacementsUsed(List.of(replacementsUsed))
+                .build();
+
+        this.webTestClient
+                .post()
+                .uri(REVISIONS + REPLACEMENTS_USED)
+                .body(Mono.just(replacementsUsedNewDto), ReplacementsUsedNewDto.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Revision.class)
+                .value(Assertions::assertNotNull)
+                .value(revisionUpdated -> {
+                    assertNotNull(revisionUpdated.getReference());
+                    assertNotNull(revisionUpdated.getReplacementsUsed());
+
+                    assertEquals(replacementsUsedNewDto.getReplacementsUsed().size(), revisionUpdated.getReplacementsUsed().size());
+
+                    for(int i = 0 ; i < revisionUpdated.getReplacementsUsed().size(); i++){
+                        assertNotNull(revisionUpdated.getReplacementsUsed().get(i).getReference());
+                        compareReplacements(replacementsUsedNewDto.getReplacementsUsed().get(i), revisionUpdated.getReplacementsUsed().get(i));
+                    }
+                });
+    }
+
+    @Test
+    void testCreateReplacementsErrorByRevisionUnknow() {
+        ReplacementUsed[] replacementsUsed = {
+                ReplacementUsed.builder()
+                        .quantity(2).discount(20).own(false).price(BigDecimal.valueOf(20.00))
+                        .replacement(Replacement.builder().reference("11111111").build())
+                        .build(),
+                ReplacementUsed.builder()
+                        .quantity(2).discount(20).own(false).price(BigDecimal.valueOf(20.00))
+                        .replacement(Replacement.builder().reference("22222222").build())
+                        .build()
+        };
+
+        ReplacementsUsedNewDto replacementsUsedNewDto = ReplacementsUsedNewDto.builder()
+                .revisionReference("rev-unknown").replacementsUsed(List.of(replacementsUsed))
+                .build();
+
+        this.webTestClient
+                .post()
+                .uri(REVISIONS + REPLACEMENTS_USED)
+                .body(Mono.just(replacementsUsedNewDto), ReplacementsUsedNewDto.class)
+                .exchange()
+                .expectStatus().is4xxClientError();
+    }
+
+    @Test
+    void testCreateReplacementsErrorByReplacementUnknow() {
+        ReplacementUsed[] replacementsUsed = {
+                ReplacementUsed.builder()
+                        .quantity(2).discount(20).own(false).price(BigDecimal.valueOf(20.00))
+                        .replacement(Replacement.builder().reference("ref-unknown").build())
+                        .build(),
+                ReplacementUsed.builder()
+                        .quantity(2).discount(20).own(false).price(BigDecimal.valueOf(20.00))
+                        .replacement(Replacement.builder().reference("22222222").build())
+                        .build()
+        };
+
+        ReplacementsUsedNewDto replacementsUsedNewDto = ReplacementsUsedNewDto.builder()
+                .revisionReference("rev-2").replacementsUsed(List.of(replacementsUsed))
+                .build();
+
+        this.webTestClient
+                .post()
+                .uri(REVISIONS + REPLACEMENTS_USED)
+                .body(Mono.just(replacementsUsedNewDto), ReplacementsUsedNewDto.class)
                 .exchange()
                 .expectStatus().is4xxClientError();
     }

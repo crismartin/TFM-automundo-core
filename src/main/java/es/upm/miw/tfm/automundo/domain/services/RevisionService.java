@@ -24,4 +24,8 @@ public class RevisionService {
     public Mono<Revision> create(Revision revision) {
         return revisionPersistence.create(revision);
     }
+
+    public Mono<Revision> createReplacementsUsed(Revision revision) {
+        return revisionPersistence.createReplacementsUsed(revision);
+    }
 }
