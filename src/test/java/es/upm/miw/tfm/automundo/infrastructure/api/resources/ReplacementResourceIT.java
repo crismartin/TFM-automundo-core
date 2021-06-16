@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 import es.upm.miw.tfm.automundo.domain.model.*;
+import es.upm.miw.tfm.automundo.infrastructure.api.RestClientTestService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.ReplacementLineDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ReplacementResourceIT {
     @Autowired
     private WebTestClient webTestClient;
-    //@Autowired
-    //private RestClientTestService restClientTestService;
+    @Autowired
+    private RestClientTestService restClientTestService;
 
     @Test
     void findByReferenceAndNameAndDescriptionAndActiveNullSafe() {
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(REPLACEMENTS + SEARCH)
@@ -41,7 +42,7 @@ public class ReplacementResourceIT {
 
     @Test
     void testFindByReferenceAndUpdate() {
-        Replacement replacementFound = this.webTestClient
+        Replacement replacementFound = this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(REPLACEMENTS + REFERENCE, "11111111")
                 .exchange()
@@ -56,7 +57,7 @@ public class ReplacementResourceIT {
         replacementUpdate.setName("Repuesto Modificado");
         replacementUpdate.setPrice(new BigDecimal(28.5));
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .put()
                 .uri(REPLACEMENTS + REFERENCE, "11111111")
                 .body(Mono.just(replacementUpdate), ReplacementUpdate.class)
@@ -75,7 +76,7 @@ public class ReplacementResourceIT {
 
     @Test
     void testFindByReferenceNotFoundException() {
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(REPLACEMENTS + REFERENCE, "$$$$$$$$")
                 .exchange()
@@ -87,7 +88,7 @@ public class ReplacementResourceIT {
         ReplacementCreation replacementCreation = ReplacementCreation.builder().reference("99999999")
                 .name("Amortiguadores").price(new BigDecimal(69.99))
                 .description("Amortiguadores para coche AUDI A3").build();
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(REPLACEMENTS)
                 .body(Mono.just(replacementCreation), ReplacementCreation.class)
@@ -110,7 +111,7 @@ public class ReplacementResourceIT {
         ReplacementCreation replacementCreation = ReplacementCreation.builder().reference("11111111")
                 .name("Amortiguadores").price(new BigDecimal(69.99))
                 .description("Amortiguadores para coche AUDI A3").build();
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(REPLACEMENTS)
                 .body(Mono.just(replacementCreation), ReplacementCreation.class)

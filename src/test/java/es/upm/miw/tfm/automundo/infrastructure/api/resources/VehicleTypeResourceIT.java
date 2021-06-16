@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 import es.upm.miw.tfm.automundo.domain.model.*;
+import es.upm.miw.tfm.automundo.infrastructure.api.RestClientTestService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleLineDto;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeDto;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeLineDto;
@@ -20,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class VehicleTypeResourceIT {
     @Autowired
     private WebTestClient webTestClient;
-    //@Autowired
-    //private RestClientTestService restClientTestService;
+    @Autowired
+    private RestClientTestService restClientTestService;
 
     @Test
     void findByReferenceAndNameAndDescriptionAndActiveNullSafe() {
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(VEHICLE_TYPES + SEARCH)
@@ -42,7 +43,7 @@ class VehicleTypeResourceIT {
 
     @Test
     void testFindByReferenceAndUpdate() {
-        VehicleType vehicleTypeFound = this.webTestClient
+        VehicleType vehicleTypeFound = this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(VEHICLE_TYPES + REFERENCE, "11111111")
                 .exchange()
@@ -56,7 +57,7 @@ class VehicleTypeResourceIT {
         BeanUtils.copyProperties(vehicleTypeFound, vehicleTypeUpdate);
         vehicleTypeUpdate.setName("Tipo de vehículo Modificado");
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .put()
                 .uri(VEHICLE_TYPES + REFERENCE, "11111111")
                 .body(Mono.just(vehicleTypeUpdate), VehicleTypeUpdate.class)
@@ -75,7 +76,7 @@ class VehicleTypeResourceIT {
     @Test
     void testUpdateNotFoundException() {
         VehicleTypeUpdate vehicleTypeUpdate = new VehicleTypeUpdate("Nombre", "Descripción", true);
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .put()
                 .uri(VEHICLE_TYPES + REFERENCE, "$$$$$$$$")
                 .body(Mono.just(vehicleTypeUpdate), VehicleTypeUpdate.class)
@@ -85,7 +86,7 @@ class VehicleTypeResourceIT {
 
     @Test
     void testFindByReferenceNotFoundException() {
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(VEHICLE_TYPES + REFERENCE, "$$$$$$$$")
                 .exchange()
@@ -96,7 +97,7 @@ class VehicleTypeResourceIT {
     void testCreate() {
         VehicleTypeCreation vehicleTypeCreation = VehicleTypeCreation.builder().reference("99999999")
                 .name("Vehículos de 3 ruedas").description("Vehículos especiales de 3 ruedas").build();
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(VEHICLE_TYPES)
                 .body(Mono.just(vehicleTypeCreation), VehicleTypeCreation.class)
@@ -117,7 +118,7 @@ class VehicleTypeResourceIT {
     void testCreateConflictReferenceException() {
         VehicleTypeCreation vehicleTypeCreation = VehicleTypeCreation.builder().reference("11111111")
                 .name("Vehículos de 3 ruedas").description("Vehículos especiales de 3 ruedas").build();
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(VEHICLE_TYPES)
                 .body(Mono.just(vehicleTypeCreation), VehicleTypeCreation.class)
@@ -127,7 +128,7 @@ class VehicleTypeResourceIT {
 
     @Test
     void testFindAllActive() {
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(VEHICLE_TYPES)
                 .exchange()

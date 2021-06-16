@@ -5,7 +5,9 @@ import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
 import es.upm.miw.tfm.automundo.domain.model.CustomerUpdate;
 import es.upm.miw.tfm.automundo.domain.services.CustomerService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.CustomerLineDto;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,6 +15,8 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping(CustomerResource.CUSTOMERS)
 public class CustomerResource {
     public static final String CUSTOMERS = "/customers";

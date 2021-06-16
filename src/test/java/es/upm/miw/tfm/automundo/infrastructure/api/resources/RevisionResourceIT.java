@@ -1,9 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
-import es.upm.miw.tfm.automundo.TestConfig;
 import es.upm.miw.tfm.automundo.domain.model.Revision;
-import es.upm.miw.tfm.automundo.domain.model.Technician;
-import es.upm.miw.tfm.automundo.domain.model.Vehicle;
+import es.upm.miw.tfm.automundo.infrastructure.api.RestClientTestService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.*;
 import es.upm.miw.tfm.automundo.infrastructure.enums.StatusRevision;
 import org.junit.jupiter.api.Assertions;
@@ -16,8 +14,6 @@ import java.time.LocalDateTime;
 
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.RevisionResource.REVISIONS;
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.RevisionResource.VEHICLE_REFERENCE;
-import static es.upm.miw.tfm.automundo.infrastructure.api.resources.VehicleResource.CUSTOMERS_IDENTIFICATION;
-import static es.upm.miw.tfm.automundo.infrastructure.api.resources.VehicleResource.VEHICLES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -26,11 +22,13 @@ class RevisionResourceIT {
 
     @Autowired
     private WebTestClient webTestClient;
+    @Autowired
+    private RestClientTestService restClientTestService;
 
     @Test
     void testFindVehiclesByIdCustomerOk() {
         String reference = "ref-1001";
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(REVISIONS + VEHICLE_REFERENCE, reference)
                 .exchange()
@@ -41,7 +39,7 @@ class RevisionResourceIT {
     @Test
     void testFindVehiclesByIdCustomerUnknow() {
         String reference = "ref-unknow-rest";
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(REVISIONS + VEHICLE_REFERENCE, reference)
                 .exchange()
@@ -64,7 +62,7 @@ class RevisionResourceIT {
                 .technician(technician)
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(REVISIONS)
                 .body(Mono.just(revisionNewDto), RevisionNewDto.class)
@@ -98,7 +96,7 @@ class RevisionResourceIT {
                 .technician(technician)
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(REVISIONS)
                 .body(Mono.just(revisionNewDto), RevisionNewDto.class)
@@ -122,7 +120,7 @@ class RevisionResourceIT {
                 .technician(technician)
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(REVISIONS)
                 .body(Mono.just(revisionNewDto), RevisionNewDto.class)

@@ -5,7 +5,9 @@ import es.upm.miw.tfm.automundo.domain.services.VehicleService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleDto;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleLineDto;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleNewDto;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,6 +15,8 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping(VehicleResource.VEHICLES)
 public class VehicleResource {
     public static final String VEHICLES = "/vehicles";
