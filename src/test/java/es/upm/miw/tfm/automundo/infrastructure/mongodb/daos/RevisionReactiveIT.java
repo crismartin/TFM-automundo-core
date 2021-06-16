@@ -1,6 +1,8 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.daos;
 
 import es.upm.miw.tfm.automundo.TestConfig;
+import es.upm.miw.tfm.automundo.domain.model.Revision;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.RevisionEntity;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.VehicleEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

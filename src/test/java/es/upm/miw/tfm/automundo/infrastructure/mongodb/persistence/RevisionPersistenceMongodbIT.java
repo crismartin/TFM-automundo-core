@@ -5,6 +5,7 @@ import es.upm.miw.tfm.automundo.domain.model.*;
 import es.upm.miw.tfm.automundo.domain.persistence.RevisionPersistence;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.ReplacementsUsedNewDto;
 import es.upm.miw.tfm.automundo.infrastructure.enums.StatusRevision;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.RevisionEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -247,6 +248,33 @@ class RevisionPersistenceMongodbIT {
 
         StepVerifier
                 .create(this.revisionPersistence.createReplacementsUsed(revision))
+                .expectError()
+                .verify();
+    }
+
+    @Test
+    void testFindByReferenceOk() {
+        String revisionReference = "rev-1";
+
+        StepVerifier
+                .create(this.revisionPersistence.findByReference(revisionReference))
+                .expectNextMatches(revision -> {
+                    assertNotNull(revision);
+                    assertNotNull(revision.getReference());
+
+                    assertEquals(revisionReference, revision.getReference());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testFindByReferenceErrorByRevisionUnknown() {
+        String revisionReference = "rev-unknown";
+
+        StepVerifier
+                .create(this.revisionPersistence.findByReference(revisionReference))
                 .expectError()
                 .verify();
     }

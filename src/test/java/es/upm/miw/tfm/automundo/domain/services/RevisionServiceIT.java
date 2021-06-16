@@ -246,4 +246,31 @@ class RevisionServiceIT {
                 .expectError()
                 .verify();
     }
+
+    @Test
+    void testFindByReferenceOk() {
+        String revisionReference = "rev-1";
+
+        StepVerifier
+                .create(this.revisionService.findByReference(revisionReference))
+                .expectNextMatches(revision -> {
+                    assertNotNull(revision);
+                    assertNotNull(revision.getReference());
+
+                    assertEquals(revisionReference, revision.getReference());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testFindByReferenceErrorByRevisionUnknown() {
+        String revisionReference = "rev-unknown";
+
+        StepVerifier
+                .create(this.revisionService.findByReference(revisionReference))
+                .expectError()
+                .verify();
+    }
 }

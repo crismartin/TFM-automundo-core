@@ -28,4 +28,8 @@ public class RevisionService {
     public Mono<Revision> createReplacementsUsed(Revision revision) {
         return revisionPersistence.createReplacementsUsed(revision);
     }
+
+    public Mono<Revision> findByReference(String reference) {
+        return revisionPersistence.findByReference(reference);
+    }
 }
