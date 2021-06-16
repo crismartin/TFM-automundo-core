@@ -1,7 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.entities;
 
 public enum Role {
-    ADMIN, OPERATOR, AUTHENTICATED;
+    ADMIN, AUTHENTICATED;
 
     public static final String PREFIX = "ROLE_";
 

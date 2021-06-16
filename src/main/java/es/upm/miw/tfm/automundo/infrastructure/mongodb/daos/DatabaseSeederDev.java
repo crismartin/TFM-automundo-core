@@ -42,11 +42,7 @@ public class DatabaseSeederDev {
                 UserEntity.builder().userName("9A").realName("admin2")
                         .surName("admin2").secondSurName("admin2").dni("00000000B")
                         .password(new BCryptPasswordEncoder().encode(pass))
-                        .role(Role.ADMIN).registrationDate(LocalDateTime.now()).build(),
-                UserEntity.builder().userName("8").realName("operator1")
-                        .surName("operator1").secondSurName("operator1").dni("11111111A")
-                        .password(new BCryptPasswordEncoder().encode(pass))
-                        .role(Role.OPERATOR).registrationDate(LocalDateTime.now()).build()
+                        .role(Role.ADMIN).registrationDate(LocalDateTime.now()).build()
         };
         this.userDao.saveAll(Arrays.asList(users));
         LogManager.getLogger(this.getClass()).warn("        ------- users");

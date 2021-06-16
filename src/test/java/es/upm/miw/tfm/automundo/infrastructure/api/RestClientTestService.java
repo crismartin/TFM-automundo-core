@@ -56,10 +56,6 @@ public class RestClientTestService {
         return this.login(Role.ADMIN, "9", webTestClient);
     }
 
-    public WebTestClient loginOperator(WebTestClient webTestClient) {
-        return this.login(Role.OPERATOR, "8", webTestClient);
-    }
-
     public void logout() {
         this.token = null;
     }

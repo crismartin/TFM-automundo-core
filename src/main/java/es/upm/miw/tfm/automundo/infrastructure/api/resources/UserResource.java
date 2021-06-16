@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.userdetails.User;
 import reactor.core.publisher.Mono;
 
-@PreAuthorize("hasRole('ADMIN') or hasRole('OPERATOR')")
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping(UserResource.USERS)
 public class UserResource {
     public static final String USERS = "/users";
-
     public static final String TOKEN = "/token";
 
     private UserService userService;
