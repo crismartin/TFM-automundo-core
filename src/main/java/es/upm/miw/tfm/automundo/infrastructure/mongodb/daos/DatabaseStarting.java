@@ -1,15 +1,27 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.daos;
 
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.UserDao;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.Role;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.UserEntity;
+import org.apache.logging.log4j.LogManager;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.synchronous.CustomerDao;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.CustomerEntity;
-import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public class DatabaseStarting {
+
+    private UserDao userDao;
+
+    private static final String ADMIN = "admin";
+    private static final String USERNAME = "9";
+    private static final String PASSWORD = "9";
+    private static final String DNI = "00000000A";
 
     private CustomerDao customerDao;
 
@@ -23,12 +35,22 @@ public class DatabaseStarting {
     private static final String RANDOM_SECOND_SUR_NAME = "Gutiérrez";
 
     @Autowired
-    public DatabaseStarting(CustomerDao customerDao) {
+    public DatabaseStarting(UserDao userDao, CustomerDao customerDao) {
+        this.userDao = userDao;
         this.customerDao = customerDao;
         this.initialize();
     }
 
     void initialize() {
+        LogManager.getLogger(this.getClass()).warn("------- Finding Admin -----------");
+        if (this.userDao.findByRoleIn(List.of(Role.ADMIN)).isEmpty()) {
+            UserEntity user = UserEntity.builder().userName(USERNAME).realName(ADMIN)
+                    .surName(ADMIN).secondSurName(ADMIN).dni(DNI)
+                    .password(new BCryptPasswordEncoder().encode(PASSWORD))
+                    .role(Role.ADMIN).registrationDate(LocalDateTime.now()).build();
+            this.userDao.save(user);
+            LogManager.getLogger(this.getClass()).warn("------- Created Admin -----------");
+        }
         if (this.customerDao.findByIdentificationId(RANDOM_IDENTIFICATION_ID).isEmpty()) {
             this.customerDao.save(CustomerEntity.builder().identificationId(RANDOM_IDENTIFICATION_ID)
                     .registrationDate(LocalDateTime.now()).lastVisitDate(LocalDateTime.now()).phone(RANDOM_PHONE)

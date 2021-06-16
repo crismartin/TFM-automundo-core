@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
-import es.upm.miw.tfm.automundo.TestConfig;
+import es.upm.miw.tfm.automundo.domain.model.Revision;
+import es.upm.miw.tfm.automundo.infrastructure.api.RestClientTestService;
 import es.upm.miw.tfm.automundo.domain.model.*;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.*;
 import es.upm.miw.tfm.automundo.infrastructure.enums.StatusRevision;
@@ -15,20 +16,21 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.RevisionResource.*;
-import static es.upm.miw.tfm.automundo.infrastructure.api.resources.VehicleResource.CUSTOMERS_IDENTIFICATION;
-import static es.upm.miw.tfm.automundo.infrastructure.api.resources.VehicleResource.VEHICLES;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @RestTestConfig
 class RevisionResourceIT {
 
     @Autowired
     private WebTestClient webTestClient;
+    @Autowired
+    private RestClientTestService restClientTestService;
 
     @Test
     void testFindVehiclesByIdCustomerOk() {
         String reference = "ref-1001";
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(REVISIONS + VEHICLE_REFERENCE, reference)
                 .exchange()
@@ -39,7 +41,7 @@ class RevisionResourceIT {
     @Test
     void testFindVehiclesByIdCustomerUnknow() {
         String reference = "ref-unknow-rest";
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(REVISIONS + VEHICLE_REFERENCE, reference)
                 .exchange()
@@ -62,7 +64,7 @@ class RevisionResourceIT {
                 .technician(technician)
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(REVISIONS)
                 .body(Mono.just(revisionNewDto), RevisionNewDto.class)
@@ -96,7 +98,7 @@ class RevisionResourceIT {
                 .technician(technician)
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(REVISIONS)
                 .body(Mono.just(revisionNewDto), RevisionNewDto.class)
@@ -120,7 +122,7 @@ class RevisionResourceIT {
                 .technician(technician)
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(REVISIONS)
                 .body(Mono.just(revisionNewDto), RevisionNewDto.class)
@@ -153,7 +155,7 @@ class RevisionResourceIT {
                 .revisionReference("rev-2").replacementsUsed(List.of(replacementsUsed))
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(REVISIONS + REPLACEMENTS_USED)
                 .body(Mono.just(replacementsUsedNewDto), ReplacementsUsedNewDto.class)
@@ -191,7 +193,7 @@ class RevisionResourceIT {
                 .revisionReference("rev-unknown").replacementsUsed(List.of(replacementsUsed))
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(REVISIONS + REPLACEMENTS_USED)
                 .body(Mono.just(replacementsUsedNewDto), ReplacementsUsedNewDto.class)
@@ -216,7 +218,7 @@ class RevisionResourceIT {
                 .revisionReference("rev-2").replacementsUsed(List.of(replacementsUsed))
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(REVISIONS + REPLACEMENTS_USED)
                 .body(Mono.just(replacementsUsedNewDto), ReplacementsUsedNewDto.class)

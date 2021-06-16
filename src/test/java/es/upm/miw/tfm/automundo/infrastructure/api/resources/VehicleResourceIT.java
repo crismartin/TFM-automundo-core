@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 
+import es.upm.miw.tfm.automundo.infrastructure.api.RestClientTestService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleDto;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleLineDto;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleNewDto;
@@ -23,11 +24,13 @@ class VehicleResourceIT {
 
     @Autowired
     private WebTestClient webTestClient;
+    @Autowired
+    private RestClientTestService restClientTestService;
 
     @Test
     void testFindVehiclesByIdCustomer() {
         String identificationCustomer = "22222222-A";
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(VEHICLES + CUSTOMERS_IDENTIFICATION, identificationCustomer)
                 .exchange()
@@ -38,7 +41,7 @@ class VehicleResourceIT {
     @Test
     void testFindByReference() {
         String referenceVehicle = "ref-1001";
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(VEHICLES + REFERENCE , referenceVehicle)
                 .exchange()
@@ -62,7 +65,7 @@ class VehicleResourceIT {
                 .identificationCustomer(IDENTIFICATION_CUSTOMER_CREATION)
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(VEHICLES)
                 .body(Mono.just(vehicleCreation), VehicleNewDto.class)
@@ -98,7 +101,7 @@ class VehicleResourceIT {
                 .identificationCustomer(IDENTIFICATION_CUSTOMER_CREATION)
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(VEHICLES)
                 .body(Mono.just(vehicleCreation), VehicleNewDto.class)
@@ -119,7 +122,7 @@ class VehicleResourceIT {
                 .identificationCustomer(IDENTIFICATION_CUSTOMER_CREATION)
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(VEHICLES)
                 .body(Mono.just(vehicleCreation), VehicleNewDto.class)
@@ -140,7 +143,7 @@ class VehicleResourceIT {
                 .identificationCustomer("Dummy1234")
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(VEHICLES)
                 .body(Mono.just(vehicleCreation), VehicleNewDto.class)
@@ -161,7 +164,7 @@ class VehicleResourceIT {
                 .identificationCustomer(IDENTIFICATION_CUSTOMER_CREATION)
                 .build();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .put()
                 .uri(VEHICLES + "/" + REFERENCE_VEHICLE)
                 .body(Mono.just(vehicle), VehicleNewDto.class)

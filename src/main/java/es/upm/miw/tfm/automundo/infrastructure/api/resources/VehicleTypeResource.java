@@ -6,7 +6,9 @@ import es.upm.miw.tfm.automundo.domain.model.VehicleTypeUpdate;
 import es.upm.miw.tfm.automundo.domain.services.VehicleTypeService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeDto;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeLineDto;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,6 +16,8 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping(VehicleTypeResource.VEHICLE_TYPES)
 public class VehicleTypeResource {
     public static final String VEHICLE_TYPES = "/vehicle-types";
