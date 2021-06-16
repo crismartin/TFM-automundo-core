@@ -5,7 +5,9 @@ import es.upm.miw.tfm.automundo.domain.model.ReplacementCreation;
 import es.upm.miw.tfm.automundo.domain.model.ReplacementUpdate;
 import es.upm.miw.tfm.automundo.domain.services.ReplacementService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.ReplacementLineDto;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,6 +15,8 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping(ReplacementResource.REPLACEMENTS)
 public class ReplacementResource {
     public static final String REPLACEMENTS = "/replacements";

@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 import es.upm.miw.tfm.automundo.domain.model.*;
+import es.upm.miw.tfm.automundo.infrastructure.api.RestClientTestService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.TechnicianLineDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,12 +19,12 @@ public class TechnicianResourceIT {
 
     @Autowired
     private WebTestClient webTestClient;
-    //@Autowired
-    //private RestClientTestService restClientTestService;
+    @Autowired
+    private RestClientTestService restClientTestService;
 
     @Test
     void findByIdentificationIdAndNameAndSurNameAndActiveNullSafe() {
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(TECHNICIANS + SEARCH)
@@ -39,7 +40,7 @@ public class TechnicianResourceIT {
 
     @Test
     void testFindByIdentificationIdAndUpdateSetNotActive() {
-        Technician technicianFound = this.webTestClient
+        Technician technicianFound = this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(TECHNICIANS + IDENTIFICATION_ID, "11111111-T")
                 .exchange()
@@ -54,7 +55,7 @@ public class TechnicianResourceIT {
         technicianUpdate.setActive(false);
         technicianUpdate.setName("Antonio");
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .put()
                 .uri(TECHNICIANS + IDENTIFICATION_ID, "11111111-T")
                 .body(Mono.just(technicianUpdate), TechnicianUpdate.class)
@@ -77,7 +78,7 @@ public class TechnicianResourceIT {
 
     @Test
     void testFindByIdentificationIdAndUpdateSetActive() {
-        Technician technicianFound = this.webTestClient
+        Technician technicianFound = this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(TECHNICIANS + IDENTIFICATION_ID, "44444444-T")
                 .exchange()
@@ -92,7 +93,7 @@ public class TechnicianResourceIT {
         technicianUpdate.setActive(true);
         technicianUpdate.setName("Borja");
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .put()
                 .uri(TECHNICIANS + IDENTIFICATION_ID, "44444444-T")
                 .body(Mono.just(technicianUpdate), TechnicianUpdate.class)
@@ -118,7 +119,7 @@ public class TechnicianResourceIT {
         TechnicianUpdate technicianUpdate =
                 new TechnicianUpdate("test", "test", "test", "test", "test", false);
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .put()
                 .uri(TECHNICIANS + IDENTIFICATION_ID, "$$$$$$$$-T")
                 .body(Mono.just(technicianUpdate), TechnicianUpdate.class)
@@ -128,7 +129,7 @@ public class TechnicianResourceIT {
 
     @Test
     void testFindByIdentificationIdNotFoundException() {
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(TECHNICIANS + IDENTIFICATION_ID, "$$$$$$$$")
                 .exchange()
@@ -140,7 +141,7 @@ public class TechnicianResourceIT {
         TechnicianCreation technicianCreation = TechnicianCreation.builder().identificationId("99999999-T")
                 .ssNumber("SS-9999999").mobile("654744344")
                 .name("Sergio").surName("Vázquez").secondSurName("Sánchez").build();
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(TECHNICIANS)
                 .body(Mono.just(technicianCreation), TechnicianCreation.class)
@@ -165,7 +166,7 @@ public class TechnicianResourceIT {
         TechnicianCreation technicianCreation = TechnicianCreation.builder().identificationId("11111111-T")
                 .ssNumber("SS-9999999").mobile("654744344")
                 .name("Sergio").surName("Vázquez").secondSurName("Sánchez").build();
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(TECHNICIANS)
                 .body(Mono.just(technicianCreation), TechnicianCreation.class)

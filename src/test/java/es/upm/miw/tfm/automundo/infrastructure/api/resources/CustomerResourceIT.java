@@ -3,6 +3,7 @@ package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 import es.upm.miw.tfm.automundo.domain.model.Customer;
 import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
 import es.upm.miw.tfm.automundo.domain.model.CustomerUpdate;
+import es.upm.miw.tfm.automundo.infrastructure.api.RestClientTestService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.CustomerLineDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,12 +21,12 @@ class CustomerResourceIT {
 
     @Autowired
     private WebTestClient webTestClient;
-    //@Autowired
-    //private RestClientTestService restClientTestService;
+    @Autowired
+    private RestClientTestService restClientTestService;
 
     @Test
     void findByIdentificationIdAndNameAndSurNameAndSecondSurNameNullSafe() {
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(CUSTOMERS + SEARCH)
@@ -41,7 +42,7 @@ class CustomerResourceIT {
 
     @Test
     void testFindByIdentificationIdAndUpdate() {
-        Customer customerFound = this.webTestClient
+        Customer customerFound = this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(CUSTOMERS + IDENTIFICATION_ID, "11111111-A")
                 .exchange()
@@ -57,7 +58,7 @@ class CustomerResourceIT {
         customerUpdate.setMobilePhone("630881234");
         customerUpdate.setAddress("C/ Modificada, 345, Madrid");
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .put()
                 .uri(CUSTOMERS + IDENTIFICATION_ID, "11111111-A")
                 .body(Mono.just(customerUpdate), CustomerUpdate.class)
@@ -85,7 +86,7 @@ class CustomerResourceIT {
         CustomerCreation customerCreation = CustomerCreation.builder().identificationId("99999999-A")
                 .phone("967811566").mobilePhone("654744344").address("C/ Nuevo 123, Leganés").email("nuevocliente@gmail.com")
                 .name("Marcos").surName("Alvaredo").secondSurName("Pino").build();
-        Customer customer = this.webTestClient
+        Customer customer = this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(CUSTOMERS)
                 .body(Mono.just(customerCreation), CustomerCreation.class)
@@ -108,13 +109,13 @@ class CustomerResourceIT {
                 }).returnResult().getResponseBody();
         assertNotNull(customer);
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .delete()
                 .uri(CUSTOMERS + IDENTIFICATION_ID, "99999999-A")
                 .exchange()
                 .expectStatus().isOk();
 
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(CUSTOMERS + IDENTIFICATION_ID, "99999999-A")
                 .exchange()
@@ -123,7 +124,7 @@ class CustomerResourceIT {
 
     @Test
     void testDeleteNotFoundException() {
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .delete()
                 .uri(CUSTOMERS + IDENTIFICATION_ID, "$$$$$$$$-$")
                 .exchange()
@@ -135,7 +136,7 @@ class CustomerResourceIT {
         CustomerCreation customerCreation = CustomerCreation.builder().identificationId("11111111-A")
                 .phone("967811566").mobilePhone("654744344").address("C/ Nuevo 123, Leganés").email("nuevocliente@gmail.com")
                 .name("Marcos").surName("Alvaredo").secondSurName("Pino").build();
-        this.webTestClient
+        this.restClientTestService.loginAdmin(webTestClient)
                 .post()
                 .uri(CUSTOMERS)
                 .body(Mono.just(customerCreation), CustomerCreation.class)
