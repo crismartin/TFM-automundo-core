@@ -5,6 +5,7 @@ import es.upm.miw.tfm.automundo.domain.model.*;
 import es.upm.miw.tfm.automundo.domain.persistence.RevisionPersistence;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.ReplacementsUsedNewDto;
 import es.upm.miw.tfm.automundo.infrastructure.enums.StatusRevision;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementUsedEntity;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.RevisionEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -329,6 +330,23 @@ class RevisionPersistenceMongodbIT {
         StepVerifier
                 .create(this.revisionPersistence.update(revision))
                 .expectError()
+                .verify();
+    }
+
+
+    @Test
+    void testUpdateCostOk(){
+        String revisionReference = "rev-4";
+
+        StepVerifier
+                .create(this.revisionPersistence.updateCostByReference(revisionReference))
+                .expectNextMatches(revisionCreated -> {
+                    assertNotNull(revisionCreated);
+                    assertNotNull(revisionCreated.getReference());
+                    assertNotNull(revisionCreated.getCost());
+                    return true;
+                })
+                .thenCancel()
                 .verify();
     }
 }

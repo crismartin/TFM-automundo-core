@@ -193,7 +193,7 @@ public class DatabaseSeederDev {
                         .id("revision-id-4")
                         .diagnostic("Cambio en filtro de otra cosa").registerDate(LocalDateTime.now())
                         .workDescription("Descripcion de la revision 4")
-                        .technicianEntity(technicians[1]).status(StatusRevision.FINALIZADO).departureDate(LocalDateTime.now()).cost(new BigDecimal("80.00"))
+                        .technicianEntity(technicians[1]).status(StatusRevision.FINALIZADO).departureDate(LocalDateTime.now())
                         .vehicleEntity(vehicles[0])
                         .reference("rev-4").build()
         };
@@ -219,6 +219,25 @@ public class DatabaseSeederDev {
                         .own(true)
                         .replacementEntity(replacements[2])
                         .revisionEntity(revisions[0])
+                        .build(),
+                ReplacementUsedEntity.builder()
+                        .id("replacementUsed-id-3")
+                        .reference("replacementUsed-ref-3")
+                        .quantity(1)
+                        .discount(10)
+                        .price(BigDecimal.valueOf(10))
+                        .own(true)
+                        .replacementEntity(replacements[0])
+                        .revisionEntity(revisions[3])
+                        .build(),
+                ReplacementUsedEntity.builder().id("replacementUsed-id-4")
+                        .reference("replacementUsed-ref-4")
+                        .quantity(2)
+                        .discount(10)
+                        .price(BigDecimal.valueOf(10))
+                        .own(true)
+                        .replacementEntity(replacements[2])
+                        .revisionEntity(revisions[3])
                         .build()
         };
 
