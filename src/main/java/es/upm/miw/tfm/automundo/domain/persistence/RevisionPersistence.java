@@ -16,4 +16,6 @@ public interface RevisionPersistence {
     Mono<Revision> findByReference(String reference);
 
     Mono<Revision> update(Revision revision);
+
+    Mono<Revision> updateCostByReference(String reference);
 }
