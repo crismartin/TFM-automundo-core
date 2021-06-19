@@ -43,6 +43,9 @@ public class ReplacementUsedEntity {
 
         replacementUsed.setReplacement(replacementEntity.toReplacement());
 
+        if(this.revisionEntity != null){
+            replacementUsed.setRevisionReference(revisionEntity.getReference());
+        }
         return replacementUsed;
     }
 }

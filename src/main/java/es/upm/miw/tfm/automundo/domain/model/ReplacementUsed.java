@@ -1,7 +1,9 @@
 package es.upm.miw.tfm.automundo.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import es.upm.miw.tfm.automundo.infrastructure.api.dtos.ReplacementUsedDto;
 import lombok.*;
+import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 
@@ -17,6 +19,7 @@ public class ReplacementUsed {
     private BigDecimal price;
     private Integer discount;
     private Replacement replacement;
+    private String revisionReference;
 
     public String getReplacementReference(){
         return replacement != null ? replacement.getReference() : null;
@@ -28,5 +31,9 @@ public class ReplacementUsed {
             result = price;
         }
         return result;
+    }
+
+    public ReplacementUsed(ReplacementUsedDto replacementUsedDto){
+        BeanUtils.copyProperties(replacementUsedDto, this);
     }
 }
