@@ -144,4 +144,19 @@ class ReplacementUsedServiceIT {
                 .expectError()
                 .verify();
     }
+
+    @Test
+    void testFindAllByRevisionReferenceOk() {
+        String revisionReference = "rev-1";
+
+        StepVerifier
+                .create(this.replacementUsedService.findAllByRevisionReference(revisionReference))
+                .expectNextMatches(replacementUsedUpdated -> {
+                    assertNotNull(replacementUsedUpdated);
+                    assertEquals(revisionReference, replacementUsedUpdated.getRevisionReference());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
 }

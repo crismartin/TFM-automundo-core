@@ -5,6 +5,7 @@ import es.upm.miw.tfm.automundo.domain.services.ReplacementUsedService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.ReplacementUsedDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 public class ReplacementUsedResource {
 
     public static final String REPLACEMENTS_USED = "/replacements-used";
+    public static final String REVISION_REFERENCE= "/revision";
 
     private ReplacementUsedService replacementUsedService;
 
@@ -30,5 +32,10 @@ public class ReplacementUsedResource {
     @PostMapping(produces = {"application/json"})
     public Mono<ReplacementUsed> create(@Valid @RequestBody ReplacementUsedDto replacementUsedUpdated){
         return replacementUsedService.create(new ReplacementUsed(replacementUsedUpdated));
+    }
+
+    @GetMapping(REVISION_REFERENCE)
+    public Flux<ReplacementUsed> findAllByRevisionReference(@RequestParam String reference) {
+        return replacementUsedService.findAllByRevisionReference(reference);
     }
 }

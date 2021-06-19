@@ -12,6 +12,7 @@ import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.RevisionEntity;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -73,6 +74,14 @@ public class ReplacementUsedPersistenceMongodb implements ReplacementUsedPersist
                         return this.replacementUsedReactive.save(replacementUsedEntity)
                                 .map(ReplacementUsedEntity::toReplacementUsed);
                     })
+                );
+    }
+
+    @Override
+    public Flux<ReplacementUsed> findAllByRevisionReference(String revisionReference) {
+        return findRevisionEntityByReference(revisionReference)
+                .flatMapMany(revisionEntity -> replacementUsedReactive.findAllByRevisionEntity(revisionEntity)
+                        .map(ReplacementUsedEntity::toReplacementUsed)
                 );
     }
 }
