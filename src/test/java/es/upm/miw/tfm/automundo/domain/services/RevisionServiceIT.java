@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @TestConfig
 class RevisionServiceIT {
@@ -270,6 +270,61 @@ class RevisionServiceIT {
 
         StepVerifier
                 .create(this.revisionService.findByReference(revisionReference))
+                .expectError()
+                .verify();
+    }
+
+    @Test
+    void testUpdateRevisionOk(){
+        Technician technician = Technician.builder()
+                .identificationId("11111111-T")
+                .build();
+
+        Revision revision = Revision.builder()
+                .reference("rev-1")
+                .diagnostic("REVISION UPDATE")
+                .registerDate(LocalDateTime.now())
+                .initialKilometers(1000)
+                .workedHours(10)
+                .technician(technician)
+                .status(StatusRevision.POR_CONFIRMAR)
+                .build();
+
+        StepVerifier
+                .create(this.revisionService.update(revision))
+                .expectNextMatches(revisionCreated -> {
+                    assertNotNull(revisionCreated);
+                    assertNotNull(revisionCreated.getReference());
+                    if(!revision.isFinaliced()){
+                        assertNull(revisionCreated.getDepartureDate());
+                        assertNull(revisionCreated.getDepartureKilometers());
+                    }
+                    assertEquals(StatusRevision.POR_CONFIRMAR, revisionCreated.getStatus());
+                    assertEquals(revisionCreated.getTechnicianIdentification(), revision.getTechnicianIdentification());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testUpdateRevisionErrorByReferenceUnknown(){
+        Technician technician = Technician.builder()
+                .identificationId("11111111-T")
+                .build();
+
+        Revision revision = Revision.builder()
+                .reference("rev-unknown")
+                .diagnostic("REVISION UPDATE")
+                .registerDate(LocalDateTime.now())
+                .initialKilometers(1000)
+                .workedHours(10)
+                .technician(technician)
+                .status(StatusRevision.POR_CONFIRMAR)
+                .build();
+
+        StepVerifier
+                .create(this.revisionService.update(revision))
                 .expectError()
                 .verify();
     }

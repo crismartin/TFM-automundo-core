@@ -3,6 +3,7 @@ package es.upm.miw.tfm.automundo.domain.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.RevisionNewDto;
+import es.upm.miw.tfm.automundo.infrastructure.api.dtos.RevisionUpdateDto;
 import es.upm.miw.tfm.automundo.infrastructure.enums.StatusRevision;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
@@ -27,6 +28,7 @@ public class Revision {
     private String workDescription;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime departureDate;
+    private Integer departureKilometers;
     private Technician technician;
     private BigDecimal cost;
     private StatusRevision status;
@@ -47,6 +49,13 @@ public class Revision {
         }
     }
 
+    public Revision(RevisionUpdateDto revisionUpdateDto) {
+        BeanUtils.copyProperties(revisionUpdateDto, this);
+        if(revisionUpdateDto.getTechnician() != null){
+            BeanUtils.copyProperties(revisionUpdateDto.getTechnician(), this.technician);
+        }
+    }
+
     public String getVehicleReference() {
         return vehicle != null ? vehicle.getReference() : null;
     }
@@ -61,5 +70,18 @@ public class Revision {
 
     public String getStatusName(){
         return status != null ? status.getName() : null;
+    }
+
+    public Boolean isFinaliced(){
+        return status == StatusRevision.FINALIZADO;
+    }
+
+    public void calTotalCost() {
+        if(replacementsUsed != null && !replacementsUsed.isEmpty()){
+            BigDecimal totalCost = replacementsUsed.stream()
+                    .map(ReplacementUsed::getTotalPrice)
+                    .reduce(BigDecimal.valueOf(0.00), (bigDecimal, bigDecimal2) -> bigDecimal.add(bigDecimal2));
+            setCost(totalCost);
+        }
     }
 }
