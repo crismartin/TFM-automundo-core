@@ -150,4 +150,22 @@ public class RevisionPersistenceMongodb implements RevisionPersistence {
                 );
     }
 
+    @Override
+    public Mono<Revision> updateCostByReference(String reference) {
+        return findEntityByReference(reference)
+                .flatMap(revisionEntity -> {
+                    Revision revision = revisionEntity.toRevision();
+                    return this.replacementUsedReactive.findAllByRevisionEntity(revisionEntity)
+                            .map(ReplacementUsedEntity::toReplacementUsed)
+                            .collectList()
+                            .flatMap(replacementUseds -> {
+                                revision.setReplacementsUsed(replacementUseds);
+                                revision.calTotalCost();
+                                revisionEntity.setCost(revision.getCost());
+                                return this.revisionReactive.save(revisionEntity)
+                                        .map(RevisionEntity::toRevision);
+                            });
+                });
+    }
+
 }
