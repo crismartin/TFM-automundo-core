@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.daos;
 
 import es.upm.miw.tfm.automundo.TestConfig;
+import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementUsedEntity;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.RevisionEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,22 @@ class ReplacementUsedReactiveIT {
                     assertNotNull(replacementUsedEntity.getId());
 
                     assertEquals(revisionEntity.getId(), replacementUsedEntity.getRevisionEntity().getId());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void findByReference() {
+        String replacementUsedReference = "replacementUsed-ref-2";
+        StepVerifier
+                .create(this.replacementUsedReactive.findByReference(replacementUsedReference))
+                .expectNextMatches(replacementUsedEntity -> {
+                    assertNotNull(replacementUsedEntity);
+                    assertNotNull(replacementUsedEntity.getId());
+
+                    assertEquals(replacementUsedReference, replacementUsedEntity.getReference());
                     return true;
                 })
                 .thenCancel()
