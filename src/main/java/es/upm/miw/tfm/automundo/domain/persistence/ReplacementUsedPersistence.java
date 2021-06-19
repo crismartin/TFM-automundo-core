@@ -7,4 +7,6 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface ReplacementUsedPersistence {
     Mono<ReplacementUsed> update(ReplacementUsed replacementUsed);
+
+    Mono<ReplacementUsed> create(ReplacementUsed replacementUsed);
 }

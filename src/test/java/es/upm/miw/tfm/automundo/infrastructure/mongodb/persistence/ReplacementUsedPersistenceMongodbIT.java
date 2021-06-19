@@ -84,4 +84,66 @@ class ReplacementUsedPersistenceMongodbIT {
                 .expectError()
                 .verify();
     }
+
+    @Test
+    void testCreateOk() {
+        Replacement replacement = Replacement.builder().reference("11111111").build();
+
+        ReplacementUsed replacementUsed = ReplacementUsed.builder()
+                .quantity(1).discount(10).price(BigDecimal.valueOf(67.95)).own(true)
+                .replacement(replacement)
+                .revisionReference("rev-3")
+                .build();
+
+        StepVerifier
+                .create(this.replacementUsedPersistence.create(replacementUsed))
+                .expectNextMatches(replacementUsedUpdated -> {
+                    assertNotNull(replacementUsedUpdated);
+                    assertNotNull(replacementUsedUpdated.getReference());
+                    assertNotNull(replacementUsedUpdated.getRevisionReference());
+                    assertNotNull(replacementUsedUpdated.getReplacementReference());
+
+                    assertEquals(replacementUsed.getQuantity(), replacementUsedUpdated.getQuantity());
+                    assertEquals(replacementUsed.getDiscount(), replacementUsedUpdated.getDiscount());
+                    assertEquals(replacementUsed.getPrice(), replacementUsedUpdated.getPrice());
+                    assertEquals(replacementUsed.getOwn(), replacementUsedUpdated.getOwn());
+                    assertEquals(replacementUsed.getReplacementReference(), replacementUsedUpdated.getReplacementReference());
+                    assertEquals(replacementUsed.getRevisionReference(), replacementUsedUpdated.getRevisionReference());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testCreateErrorByRevisionUnknown() {
+        Replacement replacement = Replacement.builder().reference("11111111").build();
+
+        ReplacementUsed replacementUsed = ReplacementUsed.builder()
+                .quantity(1).discount(10).price(BigDecimal.valueOf(67.95)).own(true)
+                .replacement(replacement)
+                .revisionReference("rev-unknown")
+                .build();
+
+        StepVerifier
+                .create(this.replacementUsedPersistence.create(replacementUsed))
+                .expectError()
+                .verify();
+    }
+
+    @Test
+    void testCreateErrorByReplacementUnknown() {
+        Replacement replacement = Replacement.builder().reference("unknown").build();
+
+        ReplacementUsed replacementUsed = ReplacementUsed.builder()
+                .quantity(1).discount(10).price(BigDecimal.valueOf(67.95)).own(true)
+                .replacement(replacement)
+                .revisionReference("rev-3")
+                .build();
+
+        StepVerifier
+                .create(this.replacementUsedPersistence.create(replacementUsed))
+                .expectError()
+                .verify();
+    }
 }
