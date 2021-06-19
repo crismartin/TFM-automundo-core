@@ -27,4 +27,8 @@ public class ReplacementUsedResource {
         return replacementUsedService.update(new ReplacementUsed(replacementUsedUpdated));
     }
 
+    @PostMapping(produces = {"application/json"})
+    public Mono<ReplacementUsed> create(@Valid @RequestBody ReplacementUsedDto replacementUsedUpdated){
+        return replacementUsedService.create(new ReplacementUsed(replacementUsedUpdated));
+    }
 }

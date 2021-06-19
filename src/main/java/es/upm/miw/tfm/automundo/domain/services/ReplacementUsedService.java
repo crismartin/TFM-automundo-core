@@ -20,4 +20,7 @@ public class ReplacementUsedService {
         return replacementUsedPersistence.update(replacementUsed);
     }
 
+    public Mono<ReplacementUsed> create(ReplacementUsed replacementUsed) {
+        return replacementUsedPersistence.create(replacementUsed);
+    }
 }

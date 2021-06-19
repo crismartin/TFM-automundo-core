@@ -118,4 +118,79 @@ class ReplacementUsedResourceIT {
                 .expectStatus().is4xxClientError();
     }
 
+    @Test
+    void testCreateOk() {
+        Replacement replacement = Replacement.builder()
+                .reference("33333333")
+                .build();
+
+        ReplacementUsedDto replacementUsedDto = ReplacementUsedDto.builder()
+                .reference("replacementUsed-ref-2")
+                .discount(10).own(true).price(BigDecimal.valueOf(100.00)).quantity(1).replacement(replacement)
+                .revisionReference("rev-1")
+                .build();
+
+        this.restClientTestService.loginAdmin(webTestClient)
+                .post()
+                .uri(REPLACEMENTS_USED)
+                .body(Mono.just(replacementUsedDto), ReplacementUsedDto.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ReplacementUsed.class)
+                .value(Assertions::assertNotNull)
+                .value(replacementUsedCreated -> {
+                    assertNotNull(replacementUsedCreated);
+                    assertNotNull(replacementUsedCreated.getReference());
+                    assertNotNull(replacementUsedCreated.getRevisionReference());
+                    assertNotNull(replacementUsedCreated.getReplacementReference());
+
+                    assertEquals(replacementUsedCreated.getQuantity(), replacementUsedCreated.getQuantity());
+                    assertEquals(replacementUsedCreated.getDiscount(), replacementUsedCreated.getDiscount());
+                    assertEquals(replacementUsedCreated.getPrice(), replacementUsedCreated.getPrice());
+                    assertEquals(replacementUsedCreated.getOwn(), replacementUsedCreated.getOwn());
+                    assertEquals(replacementUsedCreated.getReplacementReference(), replacementUsedCreated.getReplacementReference());
+                    assertEquals(replacementUsedCreated.getRevisionReference(), replacementUsedCreated.getRevisionReference());
+
+                }).returnResult().getResponseBody();
+    }
+
+    @Test
+    void testCreateErrorByReplacementReferenceUnknown() {
+        Replacement replacement = Replacement.builder()
+                .reference("unknown")
+                .build();
+
+        ReplacementUsedDto replacementUsedDto = ReplacementUsedDto.builder()
+                .reference("replacementUsed-ref-2")
+                .discount(10).own(true).price(BigDecimal.valueOf(100.00)).quantity(1).replacement(replacement)
+                .revisionReference("rev-1")
+                .build();
+
+        this.restClientTestService.loginAdmin(webTestClient)
+                .post()
+                .uri(REPLACEMENTS_USED)
+                .body(Mono.just(replacementUsedDto), ReplacementUsedDto.class)
+                .exchange()
+                .expectStatus().is4xxClientError();
+    }
+
+    @Test
+    void testCreateErrorByRevisionReferenceUnknown() {
+        Replacement replacement = Replacement.builder()
+                .reference("33333333")
+                .build();
+
+        ReplacementUsedDto replacementUsedDto = ReplacementUsedDto.builder()
+                .reference("replacementUsed-ref-2")
+                .discount(10).own(true).price(BigDecimal.valueOf(100.00)).quantity(1).replacement(replacement)
+                .revisionReference("unwknown")
+                .build();
+
+        this.restClientTestService.loginAdmin(webTestClient)
+                .post()
+                .uri(REPLACEMENTS_USED)
+                .body(Mono.just(replacementUsedDto), ReplacementUsedDto.class)
+                .exchange()
+                .expectStatus().is4xxClientError();
+    }
 }

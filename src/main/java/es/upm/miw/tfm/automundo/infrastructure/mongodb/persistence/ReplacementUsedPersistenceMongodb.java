@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Repository
 public class ReplacementUsedPersistenceMongodb implements ReplacementUsedPersistence {
 
@@ -57,5 +59,20 @@ public class ReplacementUsedPersistenceMongodb implements ReplacementUsedPersist
                                         });
                             });
                 });
+    }
+
+    @Override
+    public Mono<ReplacementUsed> create(ReplacementUsed replacementUsed) {
+        return findRevisionEntityByReference(replacementUsed.getRevisionReference())
+                .flatMap(revisionEntity -> findReplacementEntityByReference(replacementUsed.getReplacementReference())
+                    .flatMap(replacementEntity -> {
+                        ReplacementUsedEntity replacementUsedEntity = new ReplacementUsedEntity(replacementUsed);
+                        replacementUsedEntity.setRevisionEntity(revisionEntity);
+                        replacementUsedEntity.setReplacementEntity(replacementEntity);
+                        replacementUsedEntity.setReference(UUID.randomUUID().toString());
+                        return this.replacementUsedReactive.save(replacementUsedEntity)
+                                .map(ReplacementUsedEntity::toReplacementUsed);
+                    })
+                );
     }
 }
