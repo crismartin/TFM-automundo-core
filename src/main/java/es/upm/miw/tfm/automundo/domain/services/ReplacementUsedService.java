@@ -5,6 +5,7 @@ import es.upm.miw.tfm.automundo.domain.persistence.ReplacementUsedPersistence;
 import es.upm.miw.tfm.automundo.domain.persistence.RevisionPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -29,5 +30,9 @@ public class ReplacementUsedService {
         return replacementUsedPersistence.create(replacementUsed)
                 .flatMap(replacementUsed1 -> this.revisionPersistence.updateCostByReference(replacementUsed1.getRevisionReference())
                         .map(revision -> replacementUsed1));
+    }
+
+    public Flux<ReplacementUsed> findAllByRevisionReference(String revisionReference) {
+        return replacementUsedPersistence.findAllByRevisionReference(revisionReference);
     }
 }

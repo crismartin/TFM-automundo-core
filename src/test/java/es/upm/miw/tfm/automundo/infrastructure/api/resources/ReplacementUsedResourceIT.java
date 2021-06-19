@@ -7,6 +7,7 @@ import es.upm.miw.tfm.automundo.domain.model.Technician;
 import es.upm.miw.tfm.automundo.infrastructure.api.RestClientTestService;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.ReplacementUsedDto;
 import es.upm.miw.tfm.automundo.infrastructure.api.dtos.RevisionUpdateDto;
+import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleLineDto;
 import es.upm.miw.tfm.automundo.infrastructure.enums.StatusRevision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import static es.upm.miw.tfm.automundo.infrastructure.api.resources.ReplacementUsedResource.REVISION_REFERENCE;
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.RevisionResource.REPLACEMENTS_USED;
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.RevisionResource.REVISIONS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -192,5 +194,33 @@ class ReplacementUsedResourceIT {
                 .body(Mono.just(replacementUsedDto), ReplacementUsedDto.class)
                 .exchange()
                 .expectStatus().is4xxClientError();
+    }
+
+    @Test
+    void testFindAllByRevisionReferenceErrorByRevisionUnknown() {
+        String revisionReference = "rev-unknown";
+        this.restClientTestService.loginAdmin(webTestClient)
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(REPLACEMENTS_USED + REVISION_REFERENCE)
+                        .queryParam("reference", revisionReference)
+                        .build())
+                .exchange()
+                .expectStatus().is4xxClientError();
+    }
+
+    @Test
+    void testFindAllByRevisionReferenceOk() {
+        String revisionReference = "rev-1";
+        this.restClientTestService.loginAdmin(webTestClient)
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(REPLACEMENTS_USED + REVISION_REFERENCE)
+                        .queryParam("reference", revisionReference)
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(ReplacementUsed.class)
+                .value(Assertions::assertNotNull);
     }
 }
