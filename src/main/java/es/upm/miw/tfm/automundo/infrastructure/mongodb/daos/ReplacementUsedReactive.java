@@ -7,4 +7,5 @@ import reactor.core.publisher.Flux;
 
 public interface ReplacementUsedReactive extends ReactiveSortingRepository<ReplacementUsedEntity, String> {
     Flux<ReplacementUsedEntity> findAllByRevisionEntity(RevisionEntity revisionEntity);
+
 }

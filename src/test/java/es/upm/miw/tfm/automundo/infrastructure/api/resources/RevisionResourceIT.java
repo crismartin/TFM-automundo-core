@@ -140,13 +140,16 @@ class RevisionResourceIT {
 
     @Test
     void testCreateReplacementsOk() {
+        BigDecimal priceReplacementA = BigDecimal.valueOf(20.00);
+        BigDecimal priceReplacementB = BigDecimal.valueOf(20.00);
+
         ReplacementUsed[] replacementsUsed = {
                 ReplacementUsed.builder()
-                        .quantity(2).discount(20).own(false).price(BigDecimal.valueOf(20.00))
+                        .quantity(2).discount(20).own(false).price(priceReplacementA)
                         .replacement(Replacement.builder().reference("11111111").build())
                         .build(),
                 ReplacementUsed.builder()
-                        .quantity(2).discount(20).own(false).price(BigDecimal.valueOf(20.00))
+                        .quantity(2).discount(20).own(false).price(priceReplacementB)
                         .replacement(Replacement.builder().reference("22222222").build())
                         .build()
         };
@@ -173,6 +176,7 @@ class RevisionResourceIT {
                         assertNotNull(revisionUpdated.getReplacementsUsed().get(i).getReference());
                         compareReplacements(replacementsUsedNewDto.getReplacementsUsed().get(i), revisionUpdated.getReplacementsUsed().get(i));
                     }
+                    assertEquals(priceReplacementA.add(priceReplacementB), revisionUpdated.getCost());
                 });
     }
 
@@ -249,6 +253,65 @@ class RevisionResourceIT {
         this.restClientTestService.loginAdmin(webTestClient)
                 .get()
                 .uri(REVISIONS + REFERENCE, reference)
+                .exchange()
+                .expectStatus().is4xxClientError();
+    }
+
+    @Test
+    void testUpdateOk() {
+        Technician technician = Technician.builder()
+                .identificationId("11111111-T")
+                .build();
+
+        RevisionUpdateDto revisionUpdateDto = RevisionUpdateDto.builder()
+                .reference("rev-1")
+                .diagnostic("DIAGNOSTIC RESOURCE")
+                .registerDate(LocalDateTime.now())
+                .initialKilometers(1000)
+                .workedHours(10)
+                .workDescription("DESCRIPTION RESOURCE TEST")
+                .technician(technician)
+                .status(StatusRevision.POR_CONFIRMAR)
+                .build();
+
+        this.restClientTestService.loginAdmin(webTestClient)
+                .put()
+                .uri(REVISIONS)
+                .body(Mono.just(revisionUpdateDto), RevisionUpdateDto.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Revision.class)
+                .value(Assertions::assertNotNull)
+                .value(revisionCreated -> {
+                    assertNotNull(revisionCreated);
+                    assertNotNull(revisionCreated.getReference());
+
+                    assertEquals(StatusRevision.POR_CONFIRMAR, revisionCreated.getStatus());
+                    assertEquals(revisionCreated.getTechnicianIdentification(), revisionUpdateDto.getTechnicianIdentification());
+                }).returnResult().getResponseBody();
+    }
+
+    @Test
+    void testUpdateErrorByReferenceUnknown() {
+        Technician technician = Technician.builder()
+                .identificationId("11111111-T")
+                .build();
+
+        RevisionUpdateDto revisionUpdateDto = RevisionUpdateDto.builder()
+                .reference("rev-unknown")
+                .diagnostic("DIAGNOSTIC RESOURCE")
+                .registerDate(LocalDateTime.now())
+                .initialKilometers(1000)
+                .workedHours(10)
+                .workDescription("DESCRIPTION RESOURCE TEST")
+                .technician(technician)
+                .status(StatusRevision.POR_CONFIRMAR)
+                .build();
+
+        this.restClientTestService.loginAdmin(webTestClient)
+                .put()
+                .uri(REVISIONS)
+                .body(Mono.just(revisionUpdateDto), RevisionUpdateDto.class)
                 .exchange()
                 .expectStatus().is4xxClientError();
     }

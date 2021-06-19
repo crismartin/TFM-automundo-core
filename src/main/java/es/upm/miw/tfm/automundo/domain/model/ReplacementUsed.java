@@ -21,4 +21,12 @@ public class ReplacementUsed {
     public String getReplacementReference(){
         return replacement != null ? replacement.getReference() : null;
     }
+
+    public BigDecimal getTotalPrice() {
+        BigDecimal result = BigDecimal.valueOf(0.00);
+        if(price != null){
+            result = price;
+        }
+        return result;
+    }
 }

@@ -6,11 +6,11 @@ import es.upm.miw.tfm.automundo.domain.persistence.RevisionPersistence;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.daos.*;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.ReplacementUsedEntity;
 import es.upm.miw.tfm.automundo.infrastructure.mongodb.entities.RevisionEntity;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -68,6 +68,21 @@ public class RevisionPersistenceMongodb implements RevisionPersistence {
                 .switchIfEmpty(Mono.error(new NotFoundException("Revision Reference: " + reference)));
     }
 
+    private Mono<Revision> updateCost(Revision revision){
+        return findEntityByReference(revision.getReference())
+                .flatMap(revisionEntity -> {
+                    revision.calTotalCost();
+                    revisionEntity.setCost(revision.getCost());
+                    return this.revisionReactive.save(revisionEntity);
+                })
+                .map(revisionEntity -> {
+                    Revision result = revisionEntity.toRevision();
+                    result.setReplacementsUsed(revision.getReplacementsUsed());
+                    return result;
+                });
+    }
+
+
     @Override
     public Mono<Revision> createReplacementsUsed(Revision revision) {
 
@@ -94,8 +109,10 @@ public class RevisionPersistenceMongodb implements RevisionPersistence {
                 .map(replacementUseds -> {
                     revision.setReplacementsUsed(replacementUseds);
                     return revision;
-                });
+                })
+                .then(updateCost(revision));
     }
+
 
     @Override
     public Mono<Revision> findByReference(String reference) {
@@ -111,4 +128,26 @@ public class RevisionPersistenceMongodb implements RevisionPersistence {
                             });
                 });
     }
+
+    @Override
+    public Mono<Revision> update(Revision revision) {
+        if( Boolean.FALSE.equals(revision.isFinaliced()) ){
+            revision.setDepartureDate(null);
+            revision.setDepartureKilometers(null);
+        }
+        return findEntityByReference(revision.getReference())
+                .flatMap(revisionEntity -> replacementUsedReactive.findAllByRevisionEntity(revisionEntity)
+                        .map(ReplacementUsedEntity::toReplacementUsed)
+                        .collectList()
+                        .flatMap(replacementsUsed -> {
+                            revision.setReplacementsUsed(replacementsUsed);
+                            revision.calTotalCost();
+                            BeanUtils.copyProperties(revision, revisionEntity);
+                            revisionReactive.save(revisionEntity);
+                            return revisionReactive.save(revisionEntity);
+                        })
+                    .map(RevisionEntity::toRevision)
+                );
+    }
+
 }

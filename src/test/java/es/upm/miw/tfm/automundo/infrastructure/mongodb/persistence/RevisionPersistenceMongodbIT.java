@@ -149,19 +149,16 @@ class RevisionPersistenceMongodbIT {
 
     @Test
     void testCreateReplacementsOk() {
+        BigDecimal priceReplacementA = BigDecimal.valueOf(20.00);
+        BigDecimal priceReplacementB = BigDecimal.valueOf(20.00);
+
         ReplacementUsed[] replacementsUsed = {
                 ReplacementUsed.builder()
-                        .quantity(1)
-                        .discount(10)
-                        .own(true)
-                        .price(BigDecimal.valueOf(10.00))
+                        .quantity(1).discount(10).own(true).price(priceReplacementA)
                         .replacement(Replacement.builder().reference("11111111").build())
                         .build(),
                 ReplacementUsed.builder()
-                        .quantity(2)
-                        .discount(20)
-                        .own(false)
-                        .price(BigDecimal.valueOf(20.00))
+                        .quantity(2).discount(20).own(false).price(priceReplacementB)
                         .replacement(Replacement.builder().reference("33333333").build())
                         .build()
         };
@@ -185,6 +182,7 @@ class RevisionPersistenceMongodbIT {
                         assertNotNull(revision.getReplacementsUsed().get(i).getReference());
                         compareReplacements(revision.getReplacementsUsed().get(i), revisionUpdated.getReplacementsUsed().get(i));
                     }
+                    assertEquals(priceReplacementA.add(priceReplacementB), revisionUpdated.getCost());
 
                     return true;
                 })
@@ -275,6 +273,61 @@ class RevisionPersistenceMongodbIT {
 
         StepVerifier
                 .create(this.revisionPersistence.findByReference(revisionReference))
+                .expectError()
+                .verify();
+    }
+
+    @Test
+    void testUpdateRevisionOk(){
+        Technician technician = Technician.builder()
+                .identificationId("11111111-T")
+                .build();
+
+        Revision revision = Revision.builder()
+                .reference("rev-1")
+                .diagnostic("REVISION UPDATE")
+                .registerDate(LocalDateTime.now())
+                .initialKilometers(1000)
+                .workedHours(10)
+                .technician(technician)
+                .status(StatusRevision.POR_CONFIRMAR)
+                .build();
+
+        StepVerifier
+                .create(this.revisionPersistence.update(revision))
+                .expectNextMatches(revisionCreated -> {
+                    assertNotNull(revisionCreated);
+                    assertNotNull(revisionCreated.getReference());
+                    if(!revision.isFinaliced()){
+                        assertNull(revisionCreated.getDepartureDate());
+                        assertNull(revisionCreated.getDepartureKilometers());
+                    }
+                    assertEquals(StatusRevision.POR_CONFIRMAR, revisionCreated.getStatus());
+                    assertEquals(revisionCreated.getTechnicianIdentification(), revision.getTechnicianIdentification());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testUpdateRevisionErrorByReferenceUnknown(){
+        Technician technician = Technician.builder()
+                .identificationId("11111111-T")
+                .build();
+
+        Revision revision = Revision.builder()
+                .reference("rev-unknown")
+                .diagnostic("REVISION UPDATE")
+                .registerDate(LocalDateTime.now())
+                .initialKilometers(1000)
+                .workedHours(10)
+                .technician(technician)
+                .status(StatusRevision.POR_CONFIRMAR)
+                .build();
+
+        StepVerifier
+                .create(this.revisionPersistence.update(revision))
                 .expectError()
                 .verify();
     }

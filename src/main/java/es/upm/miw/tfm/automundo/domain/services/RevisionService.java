@@ -32,4 +32,8 @@ public class RevisionService {
     public Mono<Revision> findByReference(String reference) {
         return revisionPersistence.findByReference(reference);
     }
+
+    public Mono<Revision> update(Revision revision) {
+        return revisionPersistence.update(revision);
+    }
 }

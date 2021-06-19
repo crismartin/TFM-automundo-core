@@ -2,9 +2,7 @@ package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 import es.upm.miw.tfm.automundo.domain.model.Revision;
 import es.upm.miw.tfm.automundo.domain.services.RevisionService;
-import es.upm.miw.tfm.automundo.infrastructure.api.dtos.ReplacementsUsedNewDto;
-import es.upm.miw.tfm.automundo.infrastructure.api.dtos.RevisionLineDto;
-import es.upm.miw.tfm.automundo.infrastructure.api.dtos.RevisionNewDto;
+import es.upm.miw.tfm.automundo.infrastructure.api.dtos.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,5 +53,11 @@ public class RevisionResource {
     @GetMapping(REFERENCE)
     public Mono<Revision> findByReference(@PathVariable String reference) {
         return revisionService.findByReference(reference);
+    }
+
+    @PutMapping()
+    public Mono<Revision> update(@Valid @RequestBody RevisionUpdateDto revisionUpdate) {
+        Revision revision = new Revision(revisionUpdate);
+        return revisionService.update(revision);
     }
 }
