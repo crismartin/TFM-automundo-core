@@ -1,5 +1,6 @@
 package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
+import es.upm.miw.tfm.automundo.domain.exceptions.NotFoundException;
 import es.upm.miw.tfm.automundo.domain.model.Revision;
 import es.upm.miw.tfm.automundo.infrastructure.api.RestClientTestService;
 import es.upm.miw.tfm.automundo.domain.model.*;
@@ -314,5 +315,36 @@ class RevisionResourceIT {
                 .body(Mono.just(revisionUpdateDto), RevisionUpdateDto.class)
                 .exchange()
                 .expectStatus().is4xxClientError();
+    }
+
+
+    @Test
+    void testPrintByReference() {
+        String revisionReference = "rev-1";
+        this.restClientTestService.loginAdmin(webTestClient)
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(REVISIONS + PRINT)
+                        .queryParam("reference", revisionReference)
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(byte[].class)
+                .value(Assertions::assertNotNull);
+    }
+
+    @Test
+    void testPrintByReferenceErrorByReferenceUnknown() {
+        String revisionReference = "invc_N_NOTEXIST";
+        this.restClientTestService.loginAdmin(webTestClient)
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(REVISIONS + PRINT)
+                        .queryParam("reference", revisionReference)
+                        .build())
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody(NotFoundException.class)
+                .value(Assertions::assertNotNull);
     }
 }
