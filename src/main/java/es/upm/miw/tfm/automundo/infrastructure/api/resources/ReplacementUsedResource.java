@@ -16,6 +16,7 @@ public class ReplacementUsedResource {
 
     public static final String REPLACEMENTS_USED = "/replacements-used";
     public static final String REVISION_REFERENCE= "/revision";
+    public static final String REFERENCE = "/{reference}";
 
     private ReplacementUsedService replacementUsedService;
 
@@ -37,5 +38,10 @@ public class ReplacementUsedResource {
     @GetMapping(REVISION_REFERENCE)
     public Flux<ReplacementUsed> findAllByRevisionReference(@RequestParam String reference) {
         return replacementUsedService.findAllByRevisionReference(reference);
+    }
+
+    @DeleteMapping(REFERENCE)
+    public Mono<Void> delete(@PathVariable String reference) {
+        return replacementUsedService.delete(reference);
     }
 }

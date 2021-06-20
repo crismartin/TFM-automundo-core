@@ -84,4 +84,15 @@ public class ReplacementUsedPersistenceMongodb implements ReplacementUsedPersist
                         .map(ReplacementUsedEntity::toReplacementUsed)
                 );
     }
+
+    @Override
+    public Mono<String> delete(String reference) {
+        return replacementUsedReactive.findByReference(reference)
+                .switchIfEmpty(Mono.error(new NotFoundException("Replacement used Reference: " + reference)))
+                .flatMap(replacementUsedEntity -> {
+                    ReplacementUsed replacementUsed = replacementUsedEntity.toReplacementUsed();
+                    return this.replacementUsedReactive.deleteById(replacementUsedEntity.getId())
+                            .thenReturn(replacementUsed.getRevisionReference());
+                });
+    }
 }
