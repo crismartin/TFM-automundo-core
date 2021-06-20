@@ -12,4 +12,6 @@ public interface ReplacementUsedPersistence {
     Mono<ReplacementUsed> create(ReplacementUsed replacementUsed);
 
     Flux<ReplacementUsed> findAllByRevisionReference(String revisionReference);
+
+    Mono<String> delete(String reference);
 }

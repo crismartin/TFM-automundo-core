@@ -161,4 +161,29 @@ class ReplacementUsedPersistenceMongodbIT {
                 .thenCancel()
                 .verify();
     }
+
+    @Test
+    void testDeleteByReferenceOk() {
+        ReplacementUsed replacementUsed = ReplacementUsed.builder()
+                .reference("replacementUsed-ref-4").revisionReference("rev-4")
+                .build();
+
+        StepVerifier
+                .create(this.replacementUsedPersistence.delete(replacementUsed.getReference()))
+                .expectNextMatches(revisionReference -> replacementUsed.getRevisionReference().equals(revisionReference))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    void testDeleteByReferenceErrorByReferenceUnknown() {
+        ReplacementUsed replacementUsed = ReplacementUsed.builder()
+                .reference("replacementUsed-ref-unknown").revisionReference("rev-4")
+                .build();
+
+        StepVerifier
+                .create(this.replacementUsedPersistence.delete(replacementUsed.getReference()))
+                .expectError()
+                .verify();
+    }
 }

@@ -35,4 +35,10 @@ public class ReplacementUsedService {
     public Flux<ReplacementUsed> findAllByRevisionReference(String revisionReference) {
         return replacementUsedPersistence.findAllByRevisionReference(revisionReference);
     }
+
+    public Mono<Void> delete(String reference) {
+        return replacementUsedPersistence.delete(reference)
+                .flatMap(revisionReference -> this.revisionPersistence.updateCostByReference(revisionReference)
+                .then());
+    }
 }

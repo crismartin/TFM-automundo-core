@@ -159,4 +159,29 @@ class ReplacementUsedServiceIT {
                 .thenCancel()
                 .verify();
     }
+
+    @Test
+    void testDeleteByReferenceOk() {
+        ReplacementUsed replacementUsed = ReplacementUsed.builder()
+                .reference("replacementUsed-ref-3").revisionReference("rev-4")
+                .build();
+
+        StepVerifier
+                .create(this.replacementUsedService.delete(replacementUsed.getReference()))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    void testDeleteByReferenceErrorByReferenceUnknown() {
+        ReplacementUsed replacementUsed = ReplacementUsed.builder()
+                .reference("replacementUsed-ref-unknown").revisionReference("rev-4")
+                .build();
+
+        StepVerifier
+                .create(this.replacementUsedService.delete(replacementUsed.getReference()))
+                .expectError()
+                .verify();
+    }
+
 }
