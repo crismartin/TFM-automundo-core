@@ -12,15 +12,17 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
-@RestController
+
 @PreAuthorize("hasRole('ADMIN')")
 @SecurityRequirement(name = "bearerAuth")
+@RestController
 @RequestMapping(RevisionResource.REVISIONS)
 public class RevisionResource {
     public static final String REVISIONS = "/revisions";
     public static final String VEHICLE_REFERENCE = "/vehicle/{reference}";
     public static final String REPLACEMENTS_USED = "/replacements-used";
     public static final String REFERENCE = "/{reference}";
+    public static final String PRINT = "/print";
 
     private RevisionService revisionService;
 
@@ -59,5 +61,10 @@ public class RevisionResource {
     public Mono<Revision> update(@Valid @RequestBody RevisionUpdateDto revisionUpdate) {
         Revision revision = new Revision(revisionUpdate);
         return revisionService.update(revision);
+    }
+
+    @GetMapping(value = PRINT, produces = {"application/pdf"})
+    public Mono<byte[]> printByReference(@RequestParam String reference) {
+        return this.revisionService.printByReference(reference);
     }
 }

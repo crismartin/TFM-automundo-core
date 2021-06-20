@@ -84,4 +84,20 @@ public class Revision {
             setCost(totalCost);
         }
     }
+
+    public BigDecimal getBaseTax() {
+        BigDecimal result = BigDecimal.valueOf(0.00);
+        if(cost != null){
+            result = result.add(cost).multiply((BigDecimal.valueOf(1).subtract(BigDecimal.valueOf(21).divide(BigDecimal.valueOf(100)))));
+        }
+        return result;
+    }
+
+    public BigDecimal getTaxValue() {
+        BigDecimal result = BigDecimal.valueOf(0.00);
+        if(cost != null && !result.equals(cost)){
+            result = cost.subtract(getBaseTax());
+        }
+        return result;
+    }
 }

@@ -29,4 +29,13 @@ public class Customer {
     private String name;
     private String surName;
     private String secondSurName;
+
+    public String getCompletedName() {
+        StringBuilder completedName = new StringBuilder();
+        completedName.append(name).append(" ").append(surName);
+        if(secondSurName != null && !secondSurName.isEmpty()){
+            completedName.append(" ").append(secondSurName);
+        }
+        return completedName.toString();
+    }
 }

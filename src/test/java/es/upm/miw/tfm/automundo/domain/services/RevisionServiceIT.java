@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.domain.services;
 
 import es.upm.miw.tfm.automundo.TestConfig;
+import es.upm.miw.tfm.automundo.domain.exceptions.NotFoundException;
 import es.upm.miw.tfm.automundo.domain.model.*;
 import es.upm.miw.tfm.automundo.infrastructure.enums.StatusRevision;
 import org.junit.jupiter.api.Test;
@@ -326,6 +327,26 @@ class RevisionServiceIT {
         StepVerifier
                 .create(this.revisionService.update(revision))
                 .expectError()
+                .verify();
+    }
+
+    @Test
+    void testPrintByReference() {
+        String revisionReference = "rev-1";
+
+        StepVerifier
+                .create(this.revisionService.printByReference(revisionReference))
+                .expectNextCount(1)
+                .verifyComplete();
+    }
+
+    @Test
+    void testPrintByReferenceErrorByReferenceUnknown() {
+        String numberInvoice = "rev-unknown";
+
+        StepVerifier
+                .create(this.revisionService.printByReference(numberInvoice))
+                .expectError(NotFoundException.class)
                 .verify();
     }
 }
