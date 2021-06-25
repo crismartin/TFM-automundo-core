@@ -67,4 +67,9 @@ public class RevisionResource {
     public Mono<byte[]> printByReference(@RequestParam String reference) {
         return this.revisionService.printByReference(reference);
     }
+
+    @DeleteMapping(REFERENCE)
+    public Mono<Void> deleteLogic(@PathVariable String reference) {
+        return this.revisionService.deleteLogic(reference);
+    }
 }

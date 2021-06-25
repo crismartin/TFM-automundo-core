@@ -347,4 +347,24 @@ class RevisionResourceIT {
                 .expectBody(NotFoundException.class)
                 .value(Assertions::assertNotNull);
     }
+
+    @Test
+    void testDeleteLogicRevisionOk() {
+        String reference = "rev-1";
+        this.restClientTestService.loginAdmin(webTestClient)
+                .delete()
+                .uri(REVISIONS + REFERENCE, reference)
+                .exchange()
+                .expectStatus().is2xxSuccessful();
+    }
+
+    @Test
+    void testDeleteLogicRevisionErrorByReferenceUnknown() {
+        String reference = "rev-unknown";
+        this.restClientTestService.loginAdmin(webTestClient)
+                .delete()
+                .uri(REVISIONS + REFERENCE, reference)
+                .exchange()
+                .expectStatus().is4xxClientError();
+    }
 }

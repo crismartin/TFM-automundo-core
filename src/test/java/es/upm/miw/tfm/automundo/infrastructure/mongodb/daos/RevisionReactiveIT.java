@@ -23,7 +23,7 @@ class RevisionReactiveIT {
         VehicleEntity vehicleEntity = VehicleEntity.builder().id(vehicleId).build();
 
         StepVerifier
-                .create(this.revisionReactive.findAllByVehicleEntity(vehicleEntity))
+                .create(this.revisionReactive.findAllByVehicleEntityAndLeaveDateIsNull(vehicleEntity))
                 .expectNextMatches(revision -> {
                     assertNotNull(revision);
                     assertNotNull(revision.getReference());

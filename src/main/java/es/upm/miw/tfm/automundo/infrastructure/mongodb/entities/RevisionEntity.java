@@ -41,6 +41,8 @@ public class RevisionEntity {
     private StatusRevision status;
     @DBRef(lazy = true)
     private VehicleEntity vehicleEntity;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime leaveDate;
 
     public RevisionEntity(Revision revision){
         BeanUtils.copyProperties(revision, this);

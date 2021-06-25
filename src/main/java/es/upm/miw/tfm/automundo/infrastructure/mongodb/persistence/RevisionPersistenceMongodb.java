@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,7 +41,7 @@ public class RevisionPersistenceMongodb implements RevisionPersistence {
     public Flux<Revision> findAllByVehicleReference(String reference) {
         return vehicleReactive.findByReference(reference)
                 .switchIfEmpty(Mono.error(new NotFoundException("Vehicle Reference: " + reference)))
-                .flatMapMany(vehicleEntity -> this.revisionReactive.findAllByVehicleEntity(vehicleEntity)
+                .flatMapMany(vehicleEntity -> this.revisionReactive.findAllByVehicleEntityAndLeaveDateIsNull(vehicleEntity)
                         .map(RevisionEntity::toRevision)
                 );
     }
@@ -166,6 +168,16 @@ public class RevisionPersistenceMongodb implements RevisionPersistence {
                                         .map(RevisionEntity::toRevision);
                             });
                 });
+    }
+
+    @Override
+    public Mono<Void> deleteLogic(String reference) {
+        return findEntityByReference(reference)
+                .flatMap(revisionEntity -> {
+                    revisionEntity.setLeaveDate(LocalDateTime.now());
+                    return this.revisionReactive.save(revisionEntity);
+                })
+                .then();
     }
 
 }
