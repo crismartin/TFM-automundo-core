@@ -182,4 +182,32 @@ class VehiclePersistenceMongodbIT {
                 .thenCancel()
                 .verify();
     }
+
+    @Test
+    void testDeleteLogicOk(){
+        String referenceVehicle = "ref-1003";
+        StepVerifier
+                .create(this.vehiclePersistence.deleteLogic(referenceVehicle))
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(this.vehiclePersistence.findByReference(referenceVehicle))
+                .expectNextMatches(vehicle -> {
+                    assertNotNull(vehicle);
+                    assertNotNull(vehicle.getLeaveDate());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testDeleteLogicErrorByReferenceUnknown(){
+        String referenceVehicle = "ref-unknown";
+        StepVerifier
+                .create(this.vehiclePersistence.deleteLogic(referenceVehicle))
+                .expectError()
+                .verify();
+    }
 }

@@ -188,4 +188,24 @@ class VehicleResourceIT {
                     assertEquals(vehicle.getYearRelease(), vehicleUpdated.getYearRelease());
                 }).returnResult().getResponseBody();
     }
+
+    @Test
+    void testDeleteLogicOk() {
+        String referenceVehicle = "ref-2055";
+        this.restClientTestService.loginAdmin(webTestClient)
+                .delete()
+                .uri(VEHICLES + REFERENCE , referenceVehicle)
+                .exchange()
+                .expectStatus().is2xxSuccessful();
+    }
+
+    @Test
+    void testDeleteLogicErrorByReferenceUnknown() {
+        String referenceVehicle = "ref-unknown";
+        this.restClientTestService.loginAdmin(webTestClient)
+                .delete()
+                .uri(VEHICLES + REFERENCE , referenceVehicle)
+                .exchange()
+                .expectStatus().is4xxClientError();
+    }
 }

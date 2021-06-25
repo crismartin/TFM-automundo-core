@@ -7,7 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface VehicleReactive extends ReactiveSortingRepository<VehicleEntity, String> {
-    Flux<VehicleEntity> findAllByCustomer(CustomerEntity customerEntity);
+    Flux<VehicleEntity> findAllByCustomerAndLeaveDateIsNull(CustomerEntity customerEntity);
 
     Mono<VehicleEntity> findByReference(String reference);
 

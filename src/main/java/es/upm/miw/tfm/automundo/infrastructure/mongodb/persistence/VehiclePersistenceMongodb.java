@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 
 @Repository
 public class VehiclePersistenceMongodb implements VehiclePersistence {
@@ -22,6 +24,7 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
     private VehicleReactive vehicleReactive;
     private VehicleTypeReactive vehicleTypeReactive;
     private CustomerReactive customerReactive;
+
 
     @Autowired
     public VehiclePersistenceMongodb(VehicleReactive vehicleReactive, VehicleTypeReactive vehicleTypeReactive,
@@ -35,14 +38,18 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
     public Flux<Vehicle> findVehiclesByIdCustomer(String identificationId) {
         return customerReactive.findByIdentificationId(identificationId)
                 .switchIfEmpty(Mono.error(new NotFoundException("Customer Identification: " + identificationId)))
-                .flatMapMany(customerEntity -> this.vehicleReactive.findAllByCustomer(customerEntity)
+                .flatMapMany(customerEntity -> this.vehicleReactive.findAllByCustomerAndLeaveDateIsNull(customerEntity)
                 .map(VehicleEntity::toVehicle));
+    }
+
+    private Mono<VehicleEntity> findVehicleEntityByReference(String reference) {
+        return vehicleReactive.findByReference(reference)
+                .switchIfEmpty(Mono.error(new NotFoundException("Vehicle Reference: " + reference)));
     }
 
     @Override
     public Mono<Vehicle> findByReference(String reference) {
-        return vehicleReactive.findByReference(reference)
-                .switchIfEmpty(Mono.error(new NotFoundException("Vehicle Reference: " + reference)))
+        return findVehicleEntityByReference(reference)
                 .map(VehicleEntity::toVehicle);
     }
 
@@ -114,5 +121,15 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
                     return this.vehicleReactive.save(vehicleEntity);
                 })
                 .map(VehicleEntity::toVehicle);
+    }
+
+    @Override
+    public Mono<Void> deleteLogic(String reference) {
+        return findVehicleEntityByReference(reference)
+                .flatMap(vehicleEntity -> {
+                    vehicleEntity.setLeaveDate(LocalDateTime.now());
+                    return vehicleReactive.save(vehicleEntity);
+                })
+                .then();
     }
 }

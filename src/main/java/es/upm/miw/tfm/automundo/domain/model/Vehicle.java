@@ -29,6 +29,8 @@ public class Vehicle {
     private VehicleType vehicleType;
     private String typeNumber;
     private Customer customer;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime leaveDate;
 
     public String getIdentificationCustomer(){
         return this.customer != null ? customer.getIdentificationId() : null;

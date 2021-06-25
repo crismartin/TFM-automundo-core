@@ -14,4 +14,6 @@ public interface VehiclePersistence {
     Mono<Vehicle> create(Vehicle vehicle);
 
     Mono<Vehicle> update(Vehicle vehicle);
+
+    Mono<Void> deleteLogic(String reference);
 }

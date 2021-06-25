@@ -41,6 +41,8 @@ public class VehicleEntity {
     private String typeNumber;
     @DBRef(lazy = true)
     private CustomerEntity customer;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime leaveDate;
 
     public VehicleEntity(Vehicle vehicle){
         BeanUtils.copyProperties(vehicle, this);

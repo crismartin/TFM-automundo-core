@@ -57,4 +57,9 @@ public class VehicleResource {
                 .map(VehicleDto::new);
     }
 
+    @DeleteMapping(REFERENCE)
+    public Mono<Void> deleteLogic(@PathVariable String reference){
+
+        return this.vehicleService.deleteLogic(reference);
+    }
 }
