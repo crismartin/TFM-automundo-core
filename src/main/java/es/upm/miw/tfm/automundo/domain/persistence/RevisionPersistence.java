@@ -18,4 +18,6 @@ public interface RevisionPersistence {
     Mono<Revision> update(Revision revision);
 
     Mono<Revision> updateCostByReference(String reference);
+
+    Mono<Void> deleteLogic(String reference);
 }

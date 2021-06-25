@@ -34,6 +34,8 @@ public class Revision {
     private StatusRevision status;
     private Vehicle vehicle;
     private List<ReplacementUsed> replacementsUsed;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime leaveDate;
 
     public Revision(RevisionNewDto revisionNewDto){
         BeanUtils.copyProperties(revisionNewDto, this);
@@ -99,5 +101,9 @@ public class Revision {
             result = cost.subtract(getBaseTax());
         }
         return result;
+    }
+
+    public Boolean isActive(){
+        return leaveDate == null;
     }
 }

@@ -42,4 +42,8 @@ public class RevisionService {
         return this.revisionPersistence.findByReference(reference)
                 .map(new PdfInvoiceBuilder()::generateInvoice);
     }
+
+    public Mono<Void> deleteLogic(String reference) {
+        return this.revisionPersistence.deleteLogic(reference);
+    }
 }

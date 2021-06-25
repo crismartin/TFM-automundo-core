@@ -349,4 +349,36 @@ class RevisionServiceIT {
                 .expectError(NotFoundException.class)
                 .verify();
     }
+
+    @Test
+    void testDeleteLogicOk(){
+        String revisionReference = "rev-4";
+
+        StepVerifier
+                .create(this.revisionService.deleteLogic(revisionReference))
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(this.revisionService.findByReference(revisionReference))
+                .expectNextMatches(revision -> {
+                    assertNotNull(revision);
+                    assertNotNull(revision.getReference());
+
+                    assertNotNull(revision.getLeaveDate());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testDeleteLogicErrorByReferenceUnknown(){
+        String revisionReference = "rev-unknown";
+
+        StepVerifier
+                .create(this.revisionService.deleteLogic(revisionReference))
+                .expectError()
+                .verify();
+    }
 }
