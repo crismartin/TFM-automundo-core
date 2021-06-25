@@ -21,7 +21,7 @@ class VehicleReactiveIT {
         customerEntity.setId("id_customer_2");
 
         StepVerifier
-                .create(this.vehicleReactive.findAllByCustomer(customerEntity))
+                .create(this.vehicleReactive.findAllByCustomerAndLeaveDateIsNull(customerEntity))
                 .expectNextMatches(vehicleEntity -> {
                     assertNotNull(vehicleEntity);
                     assertEquals(vehicleEntity.getIdCustomer(), customerEntity.getId());

@@ -1,6 +1,7 @@
 package es.upm.miw.tfm.automundo.domain.services;
 
 import es.upm.miw.tfm.automundo.domain.model.Vehicle;
+import es.upm.miw.tfm.automundo.domain.persistence.RevisionPersistence;
 import es.upm.miw.tfm.automundo.domain.persistence.VehiclePersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,10 +13,12 @@ import reactor.core.publisher.Mono;
 public class VehicleService {
 
     private VehiclePersistence vehiclePersistence;
+    private RevisionPersistence revisionPersistence;
 
     @Autowired
-    public VehicleService(VehiclePersistence vehiclePersistence){
+    public VehicleService(VehiclePersistence vehiclePersistence, RevisionPersistence revisionPersistence){
         this.vehiclePersistence = vehiclePersistence;
+        this.revisionPersistence = revisionPersistence;
     }
 
     public Flux<Vehicle> findVehiclesByIdCustomer(String identificationId) {
@@ -32,5 +35,14 @@ public class VehicleService {
 
     public Mono<Vehicle> update(Vehicle vehicle) {
         return vehiclePersistence.update(vehicle);
+    }
+
+    public Mono<Void> deleteLogic(String reference) {
+        return vehiclePersistence.deleteLogic(reference)
+                .then(revisionPersistence.findAllByVehicleReference(reference)
+                        .doOnNext(revision -> revisionPersistence.deleteLogic(revision.getReference()))
+                        .then()
+                );
+
     }
 }

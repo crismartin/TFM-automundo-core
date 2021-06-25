@@ -182,4 +182,32 @@ class VehicleServiceIT {
                 .thenCancel()
                 .verify();
     }
+
+    @Test
+    void testDeleteLogicOk(){
+        String referenceVehicle = "ref-2004";
+        StepVerifier
+                .create(this.vehicleService.deleteLogic(referenceVehicle))
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(this.vehicleService.findByReference(referenceVehicle))
+                .expectNextMatches(vehicle -> {
+                    assertNotNull(vehicle);
+                    assertNotNull(vehicle.getLeaveDate());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testDeleteLogicErrorByReferenceUnknown(){
+        String referenceVehicle = "ref-unknown";
+        StepVerifier
+                .create(this.vehicleService.deleteLogic(referenceVehicle))
+                .expectError()
+                .verify();
+    }
 }

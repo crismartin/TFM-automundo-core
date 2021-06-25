@@ -121,6 +121,21 @@ public class DatabaseSeederDev {
                         .model("Ford Fiesta 2020-E").yearRelease(2020).plate("EM-2020").bin("vh-200").id("1lh67i68h3d78dssd09l982376mn")
                         .reference("ref-2002")
                         .vehicleType((vehicleTypes[2]))
+                        .build(),
+                VehicleEntity.builder().customer(customers[1]).registerDate(LocalDateTime.now()).lastViewDate(LocalDateTime.now())
+                        .model("Cupra T").yearRelease(2020).plate("PL-201").bin("cp-100").id("1lh67i9fds68h3d7809l982376mo")
+                        .reference("ref-1003")
+                        .vehicleType(vehicleTypes[0]).typeNumber("GOB-123456")
+                        .build(),
+                VehicleEntity.builder().customer(customers[1]).registerDate(LocalDateTime.now()).lastViewDate(LocalDateTime.now())
+                        .model("BMW Serie C").yearRelease(2020).plate("EM-2020").bin("cp-200").id("1lh67i9fds68h3d7809l982376mp")
+                        .reference("ref-2004")
+                        .vehicleType((vehicleTypes[2]))
+                        .build(),
+                VehicleEntity.builder().customer(customers[1]).registerDate(LocalDateTime.now()).lastViewDate(LocalDateTime.now())
+                        .model("Mercedes Clase E").yearRelease(2009).plate("EM-2009").bin("cp-209").id("1lh67i9fds68h3d7809l982376ma")
+                        .reference("ref-2055")
+                        .vehicleType((vehicleTypes[2]))
                         .build()
         };
         this.vehicleDao.saveAll(List.of(vehicles));
