@@ -10,4 +10,6 @@ public interface RevisionReactive extends ReactiveSortingRepository<RevisionEnti
     Flux<RevisionEntity> findAllByVehicleEntityAndLeaveDateIsNull(VehicleEntity vehicleEntity);
 
     Mono<RevisionEntity> findByReference(String reference);
+
+    Mono<Void> deleteByVehicleEntity(VehicleEntity vehicleEntity);
 }

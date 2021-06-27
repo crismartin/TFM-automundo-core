@@ -189,6 +189,7 @@ public class DatabaseSeederDev {
                         .workDescription("Descripcion de la revision 1")
                         .technicianEntity(technicians[0]).status(StatusRevision.POR_CONFIRMAR).cost(new BigDecimal("94.95"))
                         .vehicleEntity(vehicles[0])
+                        .leaveDate(null)
                         .reference("rev-1").build(),
                 RevisionEntity.builder()
                         .id("revision-id-2")
@@ -196,6 +197,7 @@ public class DatabaseSeederDev {
                         .workDescription("Descripcion de la revision 2")
                         .technicianEntity(technicians[0]).status(StatusRevision.EN_MANTENIMIENTO).cost(new BigDecimal("0.00"))
                         .vehicleEntity(vehicles[0])
+                        .leaveDate(LocalDateTime.now())
                         .reference("rev-2").build(),
                 RevisionEntity.builder()
                         .id("revision-id-3")
@@ -203,6 +205,7 @@ public class DatabaseSeederDev {
                         .workDescription("Descripcion de la revision 3")
                         .technicianEntity(technicians[1]).status(StatusRevision.NEGADO).departureDate(LocalDateTime.now()).cost(new BigDecimal("0.00"))
                         .vehicleEntity(vehicles[0])
+                        .leaveDate(null)
                         .reference("rev-3").build(),
                 RevisionEntity.builder()
                         .id("revision-id-4")
@@ -210,6 +213,7 @@ public class DatabaseSeederDev {
                         .workDescription("Descripcion de la revision 4")
                         .technicianEntity(technicians[1]).status(StatusRevision.FINALIZADO).departureDate(LocalDateTime.now()).cost(new BigDecimal("20.00"))
                         .vehicleEntity(vehicles[0])
+                        .leaveDate(null)
                         .reference("rev-4").build()
         };
         this.revisionDao.saveAll(List.of(revisions));

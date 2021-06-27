@@ -175,9 +175,24 @@ public class RevisionPersistenceMongodb implements RevisionPersistence {
         return findEntityByReference(reference)
                 .flatMap(revisionEntity -> {
                     revisionEntity.setLeaveDate(LocalDateTime.now());
-                    return this.revisionReactive.save(revisionEntity);
-                })
-                .then();
+                    return this.revisionReactive.save(revisionEntity)
+                            .then();
+                });
+    }
+
+    @Override
+    public Mono<Void> deleteByVehicleReference(String vehicleReference) {
+        return vehicleReactive.findByReference(vehicleReference)
+                .switchIfEmpty(Mono.error(new NotFoundException("Vehicle reference: " + vehicleReference)))
+                .flatMap(vehicleEntity -> this.revisionReactive.findAllByVehicleEntityAndLeaveDateIsNull(vehicleEntity)
+                        .map(revisionEntity -> {
+                            revisionEntity.setLeaveDate(LocalDateTime.now());
+                            return revisionEntity;
+                        })
+                        .collect(Collectors.toList())
+                        .flatMapMany(revisionEntities -> this.revisionReactive.saveAll(revisionEntities))
+                        .then()
+                );
     }
 
 }
