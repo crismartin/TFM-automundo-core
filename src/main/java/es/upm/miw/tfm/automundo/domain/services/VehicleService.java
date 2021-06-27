@@ -39,10 +39,7 @@ public class VehicleService {
 
     public Mono<Void> deleteLogic(String reference) {
         return vehiclePersistence.deleteLogic(reference)
-                .then(revisionPersistence.findAllByVehicleReference(reference)
-                        .doOnNext(revision -> revisionPersistence.deleteLogic(revision.getReference()))
-                        .then()
-                );
+                .then(revisionPersistence.deleteByVehicleReference(reference));
 
     }
 }
