@@ -41,10 +41,12 @@ public class CustomerService {
     }
 
     public Mono<Void> delete(String identification) {
-        return customerPersistence.deleteLogic(identification)
-                .then(vehiclePersistence.findVehiclesByIdCustomer(identification)
-                        .doOnNext(vehicle -> vehiclePersistence.deleteLogic(vehicle.getReference()))
+        /*return customerPersistence.deleteLogic(identification)
+                .then(vehicleService.findVehiclesByIdCustomer(identification)
+                        .doOnNext(vehicle -> vehicleService.deleteLogic(vehicle.getReference()))
                         .then()
-                );
+                );*/
+        return customerPersistence.deleteLogic(identification)
+                .then(vehiclePersistence.deleteByCustomerIdentificationId(identification));
     }
 }
