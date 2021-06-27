@@ -4,6 +4,7 @@ import es.upm.miw.tfm.automundo.domain.model.Customer;
 import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
 import es.upm.miw.tfm.automundo.domain.model.CustomerUpdate;
 import es.upm.miw.tfm.automundo.domain.persistence.CustomerPersistence;
+import es.upm.miw.tfm.automundo.domain.persistence.VehiclePersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -13,10 +14,12 @@ import reactor.core.publisher.Mono;
 public class CustomerService {
 
     private CustomerPersistence customerPersistence;
+    private VehiclePersistence vehiclePersistence;
 
     @Autowired
-    public CustomerService(CustomerPersistence customerPersistence) {
+    public CustomerService(CustomerPersistence customerPersistence, VehiclePersistence vehiclePersistence) {
         this.customerPersistence = customerPersistence;
+        this.vehiclePersistence = vehiclePersistence;
     }
 
     public Flux<Customer> findByIdentificationIdAndNameAndSurNameAndSecondSurNameNullSafe(
@@ -38,6 +41,10 @@ public class CustomerService {
     }
 
     public Mono<Void> delete(String identification) {
-        return this.customerPersistence.delete(identification);
+        return customerPersistence.deleteLogic(identification)
+                .then(vehiclePersistence.findVehiclesByIdCustomer(identification)
+                        .doOnNext(vehicle -> vehiclePersistence.deleteLogic(vehicle.getReference()))
+                        .then()
+                );
     }
 }
