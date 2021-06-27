@@ -29,6 +29,7 @@ public class CustomerPersistenceMongodb implements CustomerPersistence {
     @Override
     public Flux<Customer> findByIdentificationIdAndNameAndSurNameAndSecondSurNameNullSafe(String identificationId, String name, String surName, String secondSurName) {
         return this.customerReactive.findByIdentificationidAndNameAndSurnameAndSecondsurnameNullSafe(identificationId, name, surName, secondSurName)
+                .filter(customerEntity -> customerEntity.getLeaveDate() == null)
                 .map(CustomerEntity::toCustomer);
     }
 
