@@ -19,5 +19,5 @@ public interface CustomerPersistence {
 
     Mono<Customer> update(String identification, CustomerUpdate customerUpdate);
 
-    Mono<Void> delete(String identification);
+    Mono<Void> deleteLogic(String identification);
 }

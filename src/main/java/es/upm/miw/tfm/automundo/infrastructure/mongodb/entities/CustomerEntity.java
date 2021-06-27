@@ -1,5 +1,6 @@
 package es.upm.miw.tfm.automundo.infrastructure.mongodb.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import es.upm.miw.tfm.automundo.domain.model.Customer;
 import es.upm.miw.tfm.automundo.domain.model.CustomerCreation;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,8 @@ public class CustomerEntity {
     private String name;
     private String surName;
     private String secondSurName;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime leaveDate;
 
     public CustomerEntity(CustomerCreation customerCreation) {
         BeanUtils.copyProperties(customerCreation, this);

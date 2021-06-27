@@ -29,6 +29,8 @@ public class Customer {
     private String name;
     private String surName;
     private String secondSurName;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime leaveDate;
 
     public String getCompletedName() {
         StringBuilder completedName = new StringBuilder();
