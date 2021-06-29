@@ -55,8 +55,14 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
 
     private Mono<Void> assertBinNotExist(Vehicle vehicle){
         return vehicleReactive.findByBin(vehicle.getBin())
-                .flatMap(vehicleEntity -> Mono.error(
-                        new ConflictException("Exist already vehicle with bin: " + vehicleEntity.getBin()))
+                .flatMap(vehicleEntity -> {
+                            if (vehicle.getReference() != null && vehicle.getReference().equals(vehicleEntity.getReference())) {
+                                return Mono.empty();
+                            } else {
+                                return Mono.error(
+                                        new ConflictException("Exist already vehicle with bin: " + vehicleEntity.getBin()));
+                            }
+                        }
                 );
     }
 
