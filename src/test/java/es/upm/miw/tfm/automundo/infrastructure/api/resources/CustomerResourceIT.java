@@ -82,7 +82,6 @@ class CustomerResourceIT {
 
     @Test
     void testCreateAndDelete() {
-        //TODO make test also for deleting vehicles from a customer
         CustomerCreation customerCreation = CustomerCreation.builder().identificationId("99999999-A")
                 .phone("967811566").mobilePhone("654744344").address("C/ Nuevo 123, Leganés").email("nuevocliente@gmail.com")
                 .name("Marcos").surName("Alvaredo").secondSurName("Pino").build();
@@ -119,7 +118,14 @@ class CustomerResourceIT {
                 .get()
                 .uri(CUSTOMERS + IDENTIFICATION_ID, "99999999-A")
                 .exchange()
-                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND);
+                .expectBody(Customer.class)
+                .value(Assertions::assertNotNull)
+                .value(customerDeleted -> {
+                            assertEquals("99999999-A", customerDeleted.getIdentificationId());
+                            assertNotNull(customerDeleted.getLeaveDate());
+                        }
+                );
+
     }
 
     @Test

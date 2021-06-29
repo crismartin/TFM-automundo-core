@@ -16,6 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -24,14 +25,16 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
     private VehicleReactive vehicleReactive;
     private VehicleTypeReactive vehicleTypeReactive;
     private CustomerReactive customerReactive;
+    private RevisionPersistenceMongodb revisionPersistenceMongodb;
 
 
     @Autowired
     public VehiclePersistenceMongodb(VehicleReactive vehicleReactive, VehicleTypeReactive vehicleTypeReactive,
-                                     CustomerReactive customerReactive){
+                                     CustomerReactive customerReactive, RevisionPersistenceMongodb revisionPersistenceMongodb) {
         this.vehicleReactive = vehicleReactive;
         this.vehicleTypeReactive = vehicleTypeReactive;
         this.customerReactive = customerReactive;
+        this.revisionPersistenceMongodb = revisionPersistenceMongodb;
     }
 
     @Override
@@ -39,7 +42,7 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
         return customerReactive.findByIdentificationId(identificationId)
                 .switchIfEmpty(Mono.error(new NotFoundException("Customer Identification: " + identificationId)))
                 .flatMapMany(customerEntity -> this.vehicleReactive.findAllByCustomerAndLeaveDateIsNull(customerEntity)
-                .map(VehicleEntity::toVehicle));
+                        .map(VehicleEntity::toVehicle));
     }
 
     private Mono<VehicleEntity> findVehicleEntityByReference(String reference) {
@@ -53,7 +56,7 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
                 .map(VehicleEntity::toVehicle);
     }
 
-    private Mono<Void> assertBinNotExist(Vehicle vehicle){
+    private Mono<Void> assertBinNotExist(Vehicle vehicle) {
         return vehicleReactive.findByBin(vehicle.getBin())
                 .flatMap(vehicleEntity -> {
                             if (vehicle.getReference() != null && vehicle.getReference().equals(vehicleEntity.getReference())) {
@@ -66,12 +69,12 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
                 );
     }
 
-    private Mono<CustomerEntity> findCustomer(String identificationCustomer){
+    private Mono<CustomerEntity> findCustomer(String identificationCustomer) {
         return customerReactive.findByIdentificationId(identificationCustomer)
                 .switchIfEmpty(Mono.error(new NotFoundException("Customer identification: " + identificationCustomer)));
     }
 
-    private Mono<VehicleTypeEntity> findVehicleType(String vehicleTypeReference){
+    private Mono<VehicleTypeEntity> findVehicleType(String vehicleTypeReference) {
         return vehicleTypeReactive.findByReference(vehicleTypeReference)
                 .switchIfEmpty(Mono.error(new NotFoundException("VehicleType reference: " + vehicleTypeReference)));
     }
@@ -82,18 +85,18 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
         vehicleEntity.setFieldsCreation();
 
         return assertBinNotExist(vehicle)
-                .then( findCustomer(vehicle.getIdentificationCustomer())
-                            .map(customerEntity -> {
-                                vehicleEntity.setCustomer(customerEntity);
-                                return vehicleEntity;
-                            })
+                .then(findCustomer(vehicle.getIdentificationCustomer())
+                        .map(customerEntity -> {
+                            vehicleEntity.setCustomer(customerEntity);
+                            return vehicleEntity;
+                        })
                 )
                 .flatMap(vehicleEntity1 ->
-                     findVehicleType(vehicle.getVehicleTypeReference())
-                            .map(vehicleTypeEntity -> {
-                                vehicleEntity1.setVehicleType(vehicleTypeEntity);
-                                return vehicleEntity1;
-                            })
+                        findVehicleType(vehicle.getVehicleTypeReference())
+                                .map(vehicleTypeEntity -> {
+                                    vehicleEntity1.setVehicleType(vehicleTypeEntity);
+                                    return vehicleEntity1;
+                                })
                 )
                 .flatMap(vehicleEntity1 -> this.vehicleReactive.save(vehicleEntity1))
                 .map(VehicleEntity::toVehicle);
@@ -104,18 +107,18 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
         VehicleEntity vehicleEntity = new VehicleEntity(vehicle);
 
         return assertBinNotExist(vehicle)
-                .then( findCustomer(vehicle.getIdentificationCustomer())
+                .then(findCustomer(vehicle.getIdentificationCustomer())
                         .map(customerEntity -> {
                             vehicleEntity.setCustomer(customerEntity);
                             return vehicleEntity;
                         })
                 )
                 .flatMap(vehicleEntity1 ->
-                    findVehicleType(vehicle.getVehicleTypeReference())
-                            .map(vehicleTypeEntity -> {
-                                vehicleEntity1.setVehicleType(vehicleTypeEntity);
-                                return vehicleEntity1;
-                            })
+                        findVehicleType(vehicle.getVehicleTypeReference())
+                                .map(vehicleTypeEntity -> {
+                                    vehicleEntity1.setVehicleType(vehicleTypeEntity);
+                                    return vehicleEntity1;
+                                })
                 )
                 .flatMap(vehicleEntity1 -> this.vehicleReactive.findByReference(vehicleEntity1.getReference()))
                 .switchIfEmpty(Mono.error(new NotFoundException("Cannot update. Non existent vehicle " +
@@ -138,4 +141,23 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
                 })
                 .then();
     }
+
+    @Override
+    public Mono<Void> deleteByCustomerIdentificationId(String customerIdentificationId) {
+        return customerReactive.findByIdentificationId(customerIdentificationId)
+                .switchIfEmpty(Mono.error(new NotFoundException("Customer Identification Id: " + customerIdentificationId)))
+                .flatMap(customerEntity -> this.vehicleReactive.findAllByCustomerAndLeaveDateIsNull(customerEntity)
+                        .map(vehicleEntity -> {
+                            vehicleEntity.setLeaveDate(LocalDateTime.now());
+                            return vehicleEntity;
+                        })
+                        .collect(Collectors.toList())
+                        .flatMapMany(vehicleEntities -> this.vehicleReactive.saveAll(vehicleEntities))
+                        .map(vehicleEntity -> this.revisionPersistenceMongodb.deleteByVehicleReference(vehicleEntity.getReference()))
+                        .then()
+                );
+
+    }
+
+
 }

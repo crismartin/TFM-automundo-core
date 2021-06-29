@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 @Repository
 public class CustomerPersistenceMongodb implements CustomerPersistence {
 
@@ -27,14 +29,19 @@ public class CustomerPersistenceMongodb implements CustomerPersistence {
     @Override
     public Flux<Customer> findByIdentificationIdAndNameAndSurNameAndSecondSurNameNullSafe(String identificationId, String name, String surName, String secondSurName) {
         return this.customerReactive.findByIdentificationidAndNameAndSurnameAndSecondsurnameNullSafe(identificationId, name, surName, secondSurName)
+                .filter(customerEntity -> customerEntity.getLeaveDate() == null)
                 .map(CustomerEntity::toCustomer);
     }
 
     @Override
     public Mono<Customer> findByIdentificationId(String identification) {
+        return this.findByIdentificationIdEntity(identification)
+                    .map(CustomerEntity::toCustomer);
+    }
+
+    private Mono<CustomerEntity> findByIdentificationIdEntity(String identification) {
         return this.customerReactive.findByIdentificationId(identification)
-                .switchIfEmpty(Mono.error(new NotFoundException("Non existent customer with identification id: " + identification)))
-                .map(CustomerEntity::toCustomer);
+                .switchIfEmpty(Mono.error(new NotFoundException("Non existent customer with identification id: " + identification)));
     }
 
     @Override
@@ -58,12 +65,13 @@ public class CustomerPersistenceMongodb implements CustomerPersistence {
     }
 
     @Override
-    public Mono<Void> delete(String identification) {
-        //TODO before find vehicles with Customer.IdentificationId and delete it
-        return this.customerReactive.findByIdentificationId(identification)
-                .switchIfEmpty(Mono.error(new NotFoundException("Cannot delete. Non existent customer " +
-                        "with identification id: " + identification)))
-                .then(this.customerReactive.deleteByIdentificationId(identification));
+    public Mono<Void> deleteLogic(String identification) {
+        return this.findByIdentificationIdEntity(identification)
+                .flatMap(customerEntity -> {
+                    customerEntity.setLeaveDate(LocalDateTime.now());
+                    return customerReactive.save(customerEntity);
+                })
+                .then();
     }
 
     private Mono<Void> assertIdentificationIdNotExist(String identificationId) {
