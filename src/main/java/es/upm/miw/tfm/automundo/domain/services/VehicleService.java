@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-
-
 @Service
 public class VehicleService {
 
@@ -41,7 +39,6 @@ public class VehicleService {
     public Mono<Void> deleteLogic(String reference) {
         return vehiclePersistence.deleteLogic(reference)
                 .then(revisionPersistence.deleteByVehicleReference(reference));
-
     }
 
     public Flux<Vehicle> findByPlateAndBinAndCustomerNullSafe(Vehicle filterParams) {

@@ -210,4 +210,91 @@ class VehicleServiceIT {
                 .expectError()
                 .verify();
     }
+
+    @Test
+    void testFindAllByBinExistAndPlateNullAndCustomerNullOk() {
+        Vehicle filterParams = Vehicle.builder()
+                .bin("cp-209")
+                .plate(null)
+                .customer(Customer.builder()
+                        .name(null)
+                        .surName(null)
+                        .secondSurName(null)
+                        .build())
+                .build();
+
+        StepVerifier
+                .create(this.vehicleService.findByPlateAndBinAndCustomerNullSafe(filterParams))
+                .expectNextMatches(vehicleEntity -> {
+                    assertNotNull(vehicleEntity);
+                    assertEquals(vehicleEntity.getBin(), filterParams.getBin());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testFindAllByBinNullAndPlateNotExistAndCustomerNullOk() {
+        Vehicle filterParams = Vehicle.builder()
+                .bin(null)
+                .plate("unknown")
+                .customer(Customer.builder()
+                        .name(null)
+                        .surName(null)
+                        .secondSurName(null)
+                        .build())
+                .build();
+
+        StepVerifier
+                .create(this.vehicleService.findByPlateAndBinAndCustomerNullSafe(filterParams))
+                .expectNextCount(0)
+                .verifyComplete();
+    }
+
+    @Test
+    void testFindAllByBinNullAndPlateNullAndCustomerNullOk() {
+        Vehicle filterParams = Vehicle.builder()
+                .bin(null)
+                .plate(null)
+                .customer(Customer.builder()
+                        .name(null)
+                        .surName(null)
+                        .secondSurName(null)
+                        .build())
+                .build();
+
+        StepVerifier
+                .create(this.vehicleService.findByPlateAndBinAndCustomerNullSafe(filterParams))
+                .expectNextMatches(vehicleEntity -> {
+                    assertNotNull(vehicleEntity);
+                    assertNotNull(vehicleEntity.getReference());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testFindAllByBinNullAndPlateNullAndCustomerNameExistOk() {
+        Vehicle filterParams = Vehicle.builder()
+                .bin(null)
+                .plate(null)
+                .customer(Customer.builder()
+                        .name("Laura")
+                        .surName(null)
+                        .secondSurName(null)
+                        .build())
+                .build();
+
+        StepVerifier
+                .create(this.vehicleService.findByPlateAndBinAndCustomerNullSafe(filterParams))
+                .expectNextMatches(vehicleEntity -> {
+                    assertNotNull(vehicleEntity);
+                    assertEquals(vehicleEntity.getCustomer().getName(), filterParams.getCustomer().getName());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
 }

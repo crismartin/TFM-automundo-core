@@ -2,18 +2,17 @@ package es.upm.miw.tfm.automundo.infrastructure.api.resources;
 
 
 import es.upm.miw.tfm.automundo.infrastructure.api.RestClientTestService;
-import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleDto;
-import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleLineDto;
-import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleNewDto;
-import es.upm.miw.tfm.automundo.infrastructure.api.dtos.VehicleTypeDto;
+import es.upm.miw.tfm.automundo.infrastructure.api.dtos.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
+
+import static es.upm.miw.tfm.automundo.infrastructure.api.resources.CustomerResource.CUSTOMERS;
+import static es.upm.miw.tfm.automundo.infrastructure.api.resources.CustomerResource.SEARCH;
 import static es.upm.miw.tfm.automundo.infrastructure.api.resources.VehicleResource.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @RestTestConfig
@@ -207,5 +206,52 @@ class VehicleResourceIT {
                 .uri(VEHICLES + REFERENCE , referenceVehicle)
                 .exchange()
                 .expectStatus().is4xxClientError();
+    }
+
+    @Test
+    void testFindAllByBinNullAndPlateNullAndCustomerExistOk() {
+        String nameCustomer = "Laura";
+        this.restClientTestService.loginAdmin(webTestClient)
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(VEHICLES + SEARCH)
+                        .queryParam("name", nameCustomer)
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(VehicleLineCustomerDto.class)
+                .value(Assertions::assertNotNull)
+                .value(vehicles -> assertTrue(vehicles
+                        .stream().allMatch(vehicle -> vehicle.getCustomer().contains(nameCustomer))));
+    }
+
+    @Test
+    void testFindAllByBinNullAndPlateNullAndCustomerNullOk() {
+
+        this.restClientTestService.loginAdmin(webTestClient)
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(VEHICLES + SEARCH)
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(VehicleLineCustomerDto.class)
+                .value(Assertions::assertNotNull);
+    }
+
+    @Test
+    void testFindAllByBinNullAndPlateNotExistAndCustomerNullOk() {
+
+        this.restClientTestService.loginAdmin(webTestClient)
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(VEHICLES + SEARCH)
+                        .queryParam("plate", "unknown")
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(VehicleLineCustomerDto.class)
+                .value(Assertions::assertNotNull)
+                .value(vehicles -> assertTrue(vehicles.isEmpty()));
     }
 }
