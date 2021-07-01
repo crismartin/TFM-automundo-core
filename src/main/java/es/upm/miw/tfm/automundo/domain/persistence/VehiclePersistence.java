@@ -18,4 +18,6 @@ public interface VehiclePersistence {
     Mono<Void> deleteLogic(String reference);
 
     Mono<Void> deleteByCustomerIdentificationId(String customerIdentificationId);
+
+    Flux<Vehicle> findByPlateAndBinAndCustomerNullSafe(Vehicle filterParams);
 }

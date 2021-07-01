@@ -44,4 +44,42 @@ class VehicleReactiveIT {
                 .thenCancel()
                 .verify();
     }
+
+    @Test
+    void testFindAllByBinExistAndPlateNullOk() {
+        String bin = "cp-209";
+
+        StepVerifier
+                .create(this.vehicleReactive.findAllByBinAndPlateNullSafe(bin, null))
+                .expectNextMatches(vehicleEntity -> {
+                    assertNotNull(vehicleEntity);
+                    assertEquals(vehicleEntity.getBin(), bin);
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
+
+    @Test
+    void testFindAllByBinNullAndPlateNotExistOk() {
+        String plate = "unknown";
+
+        StepVerifier
+                .create(this.vehicleReactive.findAllByBinAndPlateNullSafe(null, plate))
+                .expectNextCount(0)
+                .verifyComplete();
+    }
+
+    @Test
+    void testFindAllByBinNullAndPlateNullOk() {
+        StepVerifier
+                .create(this.vehicleReactive.findAllByBinAndPlateNullSafe(null, null))
+                .expectNextMatches(vehicleEntity -> {
+                    assertNotNull(vehicleEntity);
+                    assertNotNull(vehicleEntity.getId());
+                    return true;
+                })
+                .thenCancel()
+                .verify();
+    }
 }

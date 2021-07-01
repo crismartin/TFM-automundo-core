@@ -159,5 +159,19 @@ public class VehiclePersistenceMongodb implements VehiclePersistence {
 
     }
 
+    @Override
+    public Flux<Vehicle> findByPlateAndBinAndCustomerNullSafe(Vehicle filterParams) {
+        return vehicleReactive.findAllByBinAndPlateNullSafe(filterParams.getBin(), filterParams.getPlate())
+                .filter(vehicleEntity1 -> {
+                    CustomerEntity customerEntity = vehicleEntity1.getCustomer();
+                    return vehicleEntity1.getLeaveDate() == null && (
+                            (filterParams.getCustomer().getName() == null || customerEntity.getName().equals(filterParams.getCustomer().getName()) )&&
+                                    (filterParams.getCustomer().getSurName() == null || customerEntity.getSurName().equals(filterParams.getCustomer().getSurName())) &&
+                                    (filterParams.getCustomer().getSecondSurName() == null || customerEntity.getSecondSurName().equals(filterParams.getCustomer().getSecondSurName()) )
+                    );
+                })
+                .map(VehicleEntity::toVehicle);
+
+    }
 
 }
