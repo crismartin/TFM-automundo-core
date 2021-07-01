@@ -39,7 +39,7 @@ public class VehicleEntity {
     @DBRef(lazy = true)
     private VehicleTypeEntity vehicleType;
     private String typeNumber;
-    @DBRef(lazy = true)
+    @DBRef
     private CustomerEntity customer;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime leaveDate;

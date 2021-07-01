@@ -9,6 +9,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
+
 @Service
 public class VehicleService {
 
@@ -41,5 +42,9 @@ public class VehicleService {
         return vehiclePersistence.deleteLogic(reference)
                 .then(revisionPersistence.deleteByVehicleReference(reference));
 
+    }
+
+    public Flux<Vehicle> findByPlateAndBinAndCustomerNullSafe(Vehicle filterParams) {
+        return vehiclePersistence.findByPlateAndBinAndCustomerNullSafe(filterParams);
     }
 }

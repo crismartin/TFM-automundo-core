@@ -49,4 +49,8 @@ public class Vehicle {
                 .reference(vehicleNew.getVehicleTypeReference())
                 .build();
     }
+
+    public String getCustomerNameComplete(){
+        return customer != null ? customer.getCompletedName() : null;
+    }
 }
